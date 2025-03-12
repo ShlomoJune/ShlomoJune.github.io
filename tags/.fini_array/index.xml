@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>.fini_array - Tag - J4f&#39;s blog</title>
+        <link>http://ShlomoJune.github.io/tags/.fini_array/</link>
+        <description>.fini_array - Tag - J4f&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>ShlomoJune@outlook.com (J4f)</managingEditor>
+            <webMaster>ShlomoJune@outlook.com (J4f)</webMaster><lastBuildDate>Wed, 12 Mar 2025 00:04:26 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/tags/.fini_array/" rel="self" type="application/rss+xml" /><item>
+    <title>N1Junior_2025 Pwn复现</title>
+    <link>http://ShlomoJune.github.io/posts/n1junior2025/</link>
+    <pubDate>Wed, 12 Mar 2025 00:04:26 &#43;0800</pubDate><author>
+        <name>J4f</name>
+    </author><guid>http://ShlomoJune.github.io/posts/n1junior2025/</guid>
+    <description><![CDATA[<p>N1Junior_2025 Pwn复现</p>]]></description>
+</item></channel>
+</rss>
