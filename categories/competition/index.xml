@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>competition - Category - J4f&#39;s blog</title>
+        <link>http://ShlomoJune.github.io/categories/competition/</link>
+        <description>competition - Category - J4f&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>ShlomoJune@outlook.com (J4f)</managingEditor>
+            <webMaster>ShlomoJune@outlook.com (J4f)</webMaster><lastBuildDate>Mon, 26 May 2025 18:30:30 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/categories/competition/" rel="self" type="application/rss+xml" /><item>
+    <title>DVCTF2025</title>
+    <link>http://ShlomoJune.github.io/posts/dvctf2025/</link>
+    <pubDate>Mon, 26 May 2025 18:30:30 &#43;0800</pubDate><author>
+        <name>J4f</name>
+    </author><guid>http://ShlomoJune.github.io/posts/dvctf2025/</guid>
+    <description><![CDATA[<p>格式化字符串漏洞+栈溢出</p>]]></description>
+</item></channel>
+</rss>
