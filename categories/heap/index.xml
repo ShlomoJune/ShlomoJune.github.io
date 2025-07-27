@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>heap - Category - J4f&#39;s blog</title>
+        <link>http://ShlomoJune.github.io/categories/heap/</link>
+        <description>heap - Category - J4f&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 30 May 2025 23:14:52 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/categories/heap/" rel="self" type="application/rss+xml" /><item>
+    <title>0ctf2017_babyheap</title>
+    <link>http://ShlomoJune.github.io/posts/0ctf2017_babyheap/</link>
+    <pubDate>Fri, 30 May 2025 23:14:52 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://ShlomoJune.github.io/posts/0ctf2017_babyheap/</guid>
+    <description><![CDATA[<p>堆溢出</p>]]></description>
+</item></channel>
+</rss>

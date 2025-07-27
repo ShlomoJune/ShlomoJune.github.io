@@ -3,40 +3,39 @@
         <title>All Posts - J4f&#39;s blog</title>
         <link>http://ShlomoJune.github.io/posts/</link>
         <description>All Posts | J4f&#39;s blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>ShlomoJune@outlook.com (J4f)</managingEditor>
-            <webMaster>ShlomoJune@outlook.com (J4f)</webMaster><lastBuildDate>Fri, 06 Jun 2025 16:56:04 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 06 Jun 2025 16:56:04 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/posts/" rel="self" type="application/rss+xml" /><item>
     <title>Cyber_Apocalypse_CTF_2025_Tales_from_Eldoria</title>
     <link>http://ShlomoJune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</link>
     <pubDate>Fri, 06 Jun 2025 16:56:04 &#43;0800</pubDate><author>
-        <name>J4f</name>
+        <name>Author</name>
     </author><guid>http://ShlomoJune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</guid>
     <description><![CDATA[]]></description>
 </item><item>
-    <title>0ctf2017_babyheap</title>
-    <link>http://ShlomoJune.github.io/posts/0ctf2017_babyheap/</link>
+    <title>buuctf中刷过的一些堆题</title>
+    <link>http://ShlomoJune.github.io/posts/buuctf_heap/</link>
     <pubDate>Fri, 30 May 2025 23:14:52 &#43;0800</pubDate><author>
-        <name>J4f</name>
-    </author><guid>http://ShlomoJune.github.io/posts/0ctf2017_babyheap/</guid>
-    <description><![CDATA[<p>堆溢出</p>]]></description>
+        <name>Author</name>
+    </author><guid>http://ShlomoJune.github.io/posts/buuctf_heap/</guid>
+    <description><![CDATA[]]></description>
 </item><item>
     <title>DVCTF2025</title>
     <link>http://ShlomoJune.github.io/posts/dvctf2025/</link>
     <pubDate>Mon, 26 May 2025 18:30:30 &#43;0800</pubDate><author>
-        <name>J4f</name>
+        <name>Author</name>
     </author><guid>http://ShlomoJune.github.io/posts/dvctf2025/</guid>
     <description><![CDATA[<p>格式化字符串漏洞+栈溢出</p>]]></description>
 </item><item>
     <title>延迟绑定过程分析</title>
     <link>http://ShlomoJune.github.io/posts/lazy_binding/</link>
     <pubDate>Mon, 24 Mar 2025 20:53:24 &#43;0800</pubDate><author>
-        <name>J4f</name>
+        <name>Author</name>
     </author><guid>http://ShlomoJune.github.io/posts/lazy_binding/</guid>
     <description><![CDATA[<p>延迟绑定过程分析</p>]]></description>
 </item><item>
-    <title>N1Junior_2025 Pwn复现</title>
+    <title>N1Junior_2025 Pwn</title>
     <link>http://ShlomoJune.github.io/posts/n1junior2025/</link>
     <pubDate>Wed, 12 Mar 2025 00:04:26 &#43;0800</pubDate><author>
-        <name>J4f</name>
+        <name>Author</name>
     </author><guid>http://ShlomoJune.github.io/posts/n1junior2025/</guid>
     <description><![CDATA[<p>N1Junior_2025 Pwn复现</p>]]></description>
 </item></channel>

