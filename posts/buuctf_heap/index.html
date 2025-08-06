@@ -33,7 +33,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http://ShlomoJune.github.io/posts/buuctf_heap/"
-        },"genre": "posts","wordcount":  1561 ,
+        },"genre": "posts","wordcount":  1563 ,
         "url": "http://ShlomoJune.github.io/posts/buuctf_heap/","datePublished": "2025-05-30T23:14:52+08:00","dateModified": "2025-05-30T23:14:52+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -136,8 +136,8 @@
     </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">buuctf中刷过的一些堆题</h1><div class="post-meta">
             <div class="post-meta-line">
                 <span class="post-author"><span class="author fas fa-user-circle fa-fw"></span><a href="/" title="Author" rel=" author" class="author">Author</a>
-                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/pwn/"><i class="far fa-folder fa-fw"></i>pwn</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1561 words&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;8 minutes&nbsp;</div>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/wp/"><i class="far fa-folder fa-fw"></i>WP</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2025-05-30">2025-05-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1563 words&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;8 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -1038,6 +1038,9 @@
 <li>泄露libc，通过off-by-one去改大下一个堆块的size，free掉，进入unsorted bin，通过chunk overlapping</li>
 <li>通过tcache poisoning，分配堆块到free_hook，劫持为system，再free掉内容为binsh的堆块</li>
 </ul>
+<blockquote>
+<p>在通过exp的方法泄露出libc之后才想到：可以通过填满tcache，再申请一个大于fastbin的堆块，free掉它，就会进入unsorted bin，然后申请出来，show它就可以泄露libc。exp中的方法好像复杂了</p>
+</blockquote>
 <h3 id="exp-1" class="headerLink">
     <a href="#exp-1" class="header-mark"></a><strong>exp</strong></h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
