@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>phppwn - Category - J4f&#39;s blog</title>
+        <link>http://ShlomoJune.github.io/categories/phppwn/</link>
+        <description>phppwn - Category - J4f&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 14 Aug 2025 00:34:16 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/categories/phppwn/" rel="self" type="application/rss+xml" /><item>
+    <title>phppwn逆向</title>
+    <link>http://ShlomoJune.github.io/posts/phppwn_re_struct/</link>
+    <pubDate>Thu, 14 Aug 2025 00:34:16 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://ShlomoJune.github.io/posts/phppwn_re_struct/</guid>
+    <description><![CDATA[<p>相关结构体修复</p>]]></description>
+</item></channel>
+</rss>
