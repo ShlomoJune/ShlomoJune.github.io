@@ -3,7 +3,21 @@
         <title>All Posts - J4f&#39;s blog</title>
         <link>http://ShlomoJune.github.io/posts/</link>
         <description>All Posts | J4f&#39;s blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 28 Aug 2025 21:51:40 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 23 Oct 2025 23:40:32 &#43;0800</lastBuildDate><atom:link href="http://ShlomoJune.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>【阅读】人生的智慧</title>
+    <link>http://ShlomoJune.github.io/posts/read_rsdzh/</link>
+    <pubDate>Thu, 23 Oct 2025 23:40:32 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://ShlomoJune.github.io/posts/read_rsdzh/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>VMpwn</title>
+    <link>http://ShlomoJune.github.io/posts/vmpwn/</link>
+    <pubDate>Thu, 23 Oct 2025 23:27:58 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://ShlomoJune.github.io/posts/vmpwn/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>C&#43;&#43;pwn</title>
     <link>http://ShlomoJune.github.io/posts/cpp_pwn/</link>
     <pubDate>Thu, 28 Aug 2025 21:51:40 &#43;0800</pubDate><author>
@@ -23,6 +37,13 @@
     <pubDate>Thu, 07 Aug 2025 23:23:00 &#43;0800</pubDate><author>
         <name>Author</name>
     </author><guid>http://ShlomoJune.github.io/posts/trxctf2025/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>【阅读】法治的细节</title>
+    <link>http://ShlomoJune.github.io/posts/read_fzdxj/</link>
+    <pubDate>Wed, 06 Aug 2025 16:42:15 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://ShlomoJune.github.io/posts/read_fzdxj/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Cyber_Apocalypse_CTF_2025_Tales_from_Eldoria</title>
@@ -52,12 +73,5 @@
         <name>Author</name>
     </author><guid>http://ShlomoJune.github.io/posts/lazy_binding/</guid>
     <description><![CDATA[<p>延迟绑定过程分析</p>]]></description>
-</item><item>
-    <title>N1Junior_2025 Pwn</title>
-    <link>http://ShlomoJune.github.io/posts/n1junior2025/</link>
-    <pubDate>Wed, 12 Mar 2025 00:04:26 &#43;0800</pubDate><author>
-        <name>Author</name>
-    </author><guid>http://ShlomoJune.github.io/posts/n1junior2025/</guid>
-    <description><![CDATA[<p>N1Junior_2025 Pwn复现</p>]]></description>
 </item></channel>
 </rss>
