@@ -778,5 +778,5 @@ p.interactive()
 ---
 
 > Author: J4f  
-> URL: http://localhost:1313/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/  
+> URL: https://shlomojune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/  
 

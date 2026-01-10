@@ -2,42 +2,42 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>WP - Category - J4f&#39;s blog</title>
-    <link>http://localhost:1313/categories/wp/</link>
+    <link>https://shlomojune.github.io/categories/wp/</link>
     <description>J4f&#39;s blog</description>
     <generator>Hugo 0.154.3 &amp; FixIt v0.4.2-20260109063229-50d27e0e</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 07 Aug 2025 23:39:42 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/categories/wp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Jan 2026 21:01:26 +0800</lastBuildDate>
+    <atom:link href="https://shlomojune.github.io/categories/wp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>TRXCTF2025</title>
-      <link>http://localhost:1313/posts/trxctf2025/</link>
+      <link>https://shlomojune.github.io/posts/trxctf2025/</link>
       <pubDate>Thu, 07 Aug 2025 23:23:00 +0800</pubDate>
-      <guid>http://localhost:1313/posts/trxctf2025/</guid>
-      <category domain="http://localhost:1313/categories/wp/">WP</category>
+      <guid>https://shlomojune.github.io/posts/trxctf2025/</guid>
+      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
       <description>TRXCTF2025</description>
     </item>
     <item>
       <title>Cyber_Apocalypse_CTF_2025_Tales_from_Eldoria</title>
-      <link>http://localhost:1313/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</link>
+      <link>https://shlomojune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</link>
       <pubDate>Fri, 06 Jun 2025 16:56:04 +0800</pubDate>
-      <guid>http://localhost:1313/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</guid>
-      <category domain="http://localhost:1313/categories/wp/">WP</category>
+      <guid>https://shlomojune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</guid>
+      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
       <description>Cyber_Apocalypse_CTF_2025_Tales_from_Eldoria</description>
     </item>
     <item>
       <title>DVCTF2025</title>
-      <link>http://localhost:1313/posts/dvctf2025/</link>
+      <link>https://shlomojune.github.io/posts/dvctf2025/</link>
       <pubDate>Mon, 26 May 2025 18:30:30 +0800</pubDate>
-      <guid>http://localhost:1313/posts/dvctf2025/</guid>
-      <category domain="http://localhost:1313/categories/wp/">WP</category>
+      <guid>https://shlomojune.github.io/posts/dvctf2025/</guid>
+      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
       <description>&lt;p&gt;格式化字符串漏洞+栈溢出&lt;/p&gt;</description>
     </item>
     <item>
       <title>N1Junior_2025 Pwn</title>
-      <link>http://localhost:1313/posts/n1junior2025/</link>
+      <link>https://shlomojune.github.io/posts/n1junior2025/</link>
       <pubDate>Wed, 12 Mar 2025 00:04:26 +0800</pubDate>
-      <guid>http://localhost:1313/posts/n1junior2025/</guid>
-      <category domain="http://localhost:1313/categories/wp/">WP</category>
+      <guid>https://shlomojune.github.io/posts/n1junior2025/</guid>
+      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
       <description>&lt;p&gt;N1Junior_2025 Pwn复现&lt;/p&gt;</description>
     </item>
   </channel>

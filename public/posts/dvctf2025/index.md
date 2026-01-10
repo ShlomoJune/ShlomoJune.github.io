@@ -219,5 +219,5 @@ p.interactive()
 ---
 
 > Author: J4f  
-> URL: http://localhost:1313/posts/dvctf2025/  
+> URL: https://shlomojune.github.io/posts/dvctf2025/  
 

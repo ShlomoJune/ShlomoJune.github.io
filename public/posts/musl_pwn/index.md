@@ -791,5 +791,5 @@ itr()
 ---
 
 > Author: J4f  
-> URL: http://localhost:1313/posts/musl_pwn/  
+> URL: https://shlomojune.github.io/posts/musl_pwn/  
 

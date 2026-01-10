@@ -45,5 +45,5 @@
 ---
 
 > Author: J4f  
-> URL: http://localhost:1313/posts/read_fzdxj/  
+> URL: https://shlomojune.github.io/posts/read_fzdxj/  
 

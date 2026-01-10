@@ -205,5 +205,5 @@ printf@plt:
 ---
 
 > Author: J4f  
-> URL: http://localhost:1313/posts/lazy_binding/  
+> URL: https://shlomojune.github.io/posts/lazy_binding/  
 

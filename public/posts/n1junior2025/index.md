@@ -555,5 +555,5 @@ p.interactive()
 ---
 
 > Author: J4f  
-> URL: http://localhost:1313/posts/n1junior2025/  
+> URL: https://shlomojune.github.io/posts/n1junior2025/  
 
