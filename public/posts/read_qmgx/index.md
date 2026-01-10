@@ -147,5 +147,5 @@
 ---
 
 > Author: J4f  
-> URL: https://shlomojune.github.io/posts/read_qmgx/  
+> URL: http://localhost:1313/posts/read_qmgx/  
 

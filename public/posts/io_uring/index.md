@@ -773,5 +773,5 @@ https://kernel.dk/io_uring.pdf
 ---
 
 > Author: J4f  
-> URL: https://shlomojune.github.io/posts/io_uring/  
+> URL: http://localhost:1313/posts/io_uring/  
 

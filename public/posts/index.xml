@@ -2,106 +2,121 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>All Posts - J4f&#39;s blog</title>
-    <link>https://shlomojune.github.io/posts/</link>
+    <link>http://localhost:1313/posts/</link>
     <description>J4f&#39;s blog</description>
     <generator>Hugo 0.154.3 &amp; FixIt v0.4.2-20260109063229-50d27e0e</generator>
     <language>en</language>
     <lastBuildDate>Sat, 10 Jan 2026 21:01:26 +0800</lastBuildDate>
-    <atom:link href="https://shlomojune.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>《基督山伯爵》</title>
+      <link>http://localhost:1313/posts/read_jdsbj/</link>
+      <pubDate>Sat, 10 Jan 2026 03:13:46 +0800</pubDate>
+      <guid>http://localhost:1313/posts/read_jdsbj/</guid>
+      <description>《基督山伯爵》</description>
+    </item>
     <item>
       <title>通过*ctf2022_babynote入门musl pwn</title>
-      <link>https://shlomojune.github.io/posts/musl_pwn/</link>
+      <link>http://localhost:1313/posts/musl_pwn/</link>
       <pubDate>Sat, 10 Jan 2026 02:01:48 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/musl_pwn/</guid>
-      <category domain="https://shlomojune.github.io/categories/pwn/">Pwn</category>
+      <guid>http://localhost:1313/posts/musl_pwn/</guid>
+      <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
       <description>通过*ctf2022_babynote入门musl pwn</description>
     </item>
     <item>
       <title>《亲密关系》</title>
-      <link>https://shlomojune.github.io/posts/read_qmgx/</link>
+      <link>http://localhost:1313/posts/read_qmgx/</link>
       <pubDate>Thu, 23 Oct 2025 23:55:44 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/read_qmgx/</guid>
-      <category domain="https://shlomojune.github.io/categories/reading/">Reading</category>
+      <guid>http://localhost:1313/posts/read_qmgx/</guid>
+      <category domain="http://localhost:1313/categories/reading/">Reading</category>
       <description>《亲密关系》</description>
     </item>
     <item>
       <title>《人生的智慧》</title>
-      <link>https://shlomojune.github.io/posts/read_rsdzh/</link>
+      <link>http://localhost:1313/posts/read_rsdzh/</link>
       <pubDate>Thu, 23 Oct 2025 23:40:32 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/read_rsdzh/</guid>
-      <category domain="https://shlomojune.github.io/categories/reading/">Reading</category>
+      <guid>http://localhost:1313/posts/read_rsdzh/</guid>
+      <category domain="http://localhost:1313/categories/reading/">Reading</category>
       <description>《人生的智慧》</description>
     </item>
     <item>
       <title>VMpwn</title>
-      <link>https://shlomojune.github.io/posts/vmpwn/</link>
+      <link>http://localhost:1313/posts/vmpwn/</link>
       <pubDate>Thu, 23 Oct 2025 23:27:58 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/vmpwn/</guid>
-      <category domain="https://shlomojune.github.io/categories/pwn/">Pwn</category>
+      <guid>http://localhost:1313/posts/vmpwn/</guid>
+      <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
       <description>VMpwn</description>
     </item>
     <item>
       <title>C&#43;&#43;pwn之异常处理</title>
-      <link>https://shlomojune.github.io/posts/cpp_pwn/</link>
+      <link>http://localhost:1313/posts/cpp_pwn/</link>
       <pubDate>Thu, 28 Aug 2025 21:51:40 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/cpp_pwn/</guid>
-      <category domain="https://shlomojune.github.io/categories/pwn/">Pwn</category>
+      <guid>http://localhost:1313/posts/cpp_pwn/</guid>
+      <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
       <description>C++pwn之异常处理</description>
     </item>
     <item>
       <title>io_uring</title>
-      <link>https://shlomojune.github.io/posts/io_uring/</link>
+      <link>http://localhost:1313/posts/io_uring/</link>
       <pubDate>Sat, 23 Aug 2025 13:56:19 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/io_uring/</guid>
-      <category domain="https://shlomojune.github.io/categories/pwn/">Pwn</category>
+      <guid>http://localhost:1313/posts/io_uring/</guid>
+      <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
       <description>&lt;p&gt;突破沙箱规则，实现orw&lt;/p&gt;</description>
     </item>
     <item>
+      <title>phppwn逆向</title>
+      <link>http://localhost:1313/posts/phppwn_re_struct/</link>
+      <pubDate>Thu, 14 Aug 2025 00:34:16 +0800</pubDate>
+      <guid>http://localhost:1313/posts/phppwn_re_struct/</guid>
+      <category domain="http://localhost:1313/categories/phppwn/">Phppwn</category>
+      <description>&lt;p&gt;相关结构体修复&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>TRXCTF2025</title>
-      <link>https://shlomojune.github.io/posts/trxctf2025/</link>
+      <link>http://localhost:1313/posts/trxctf2025/</link>
       <pubDate>Thu, 07 Aug 2025 23:23:00 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/trxctf2025/</guid>
-      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
+      <guid>http://localhost:1313/posts/trxctf2025/</guid>
+      <category domain="http://localhost:1313/categories/wp/">WP</category>
       <description>TRXCTF2025</description>
     </item>
     <item>
       <title>《法治的细节》</title>
-      <link>https://shlomojune.github.io/posts/read_fzdxj/</link>
+      <link>http://localhost:1313/posts/read_fzdxj/</link>
       <pubDate>Wed, 06 Aug 2025 16:42:15 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/read_fzdxj/</guid>
-      <category domain="https://shlomojune.github.io/categories/reading/">Reading</category>
+      <guid>http://localhost:1313/posts/read_fzdxj/</guid>
+      <category domain="http://localhost:1313/categories/reading/">Reading</category>
       <description>《法治的细节》</description>
     </item>
     <item>
       <title>Cyber_Apocalypse_CTF_2025_Tales_from_Eldoria</title>
-      <link>https://shlomojune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</link>
+      <link>http://localhost:1313/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</link>
       <pubDate>Fri, 06 Jun 2025 16:56:04 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</guid>
-      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
+      <guid>http://localhost:1313/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</guid>
+      <category domain="http://localhost:1313/categories/wp/">WP</category>
       <description>Cyber_Apocalypse_CTF_2025_Tales_from_Eldoria</description>
     </item>
     <item>
       <title>DVCTF2025</title>
-      <link>https://shlomojune.github.io/posts/dvctf2025/</link>
+      <link>http://localhost:1313/posts/dvctf2025/</link>
       <pubDate>Mon, 26 May 2025 18:30:30 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/dvctf2025/</guid>
-      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
+      <guid>http://localhost:1313/posts/dvctf2025/</guid>
+      <category domain="http://localhost:1313/categories/wp/">WP</category>
       <description>&lt;p&gt;格式化字符串漏洞+栈溢出&lt;/p&gt;</description>
     </item>
     <item>
       <title>延迟绑定过程分析</title>
-      <link>https://shlomojune.github.io/posts/lazy_binding/</link>
+      <link>http://localhost:1313/posts/lazy_binding/</link>
       <pubDate>Mon, 24 Mar 2025 20:53:24 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/lazy_binding/</guid>
-      <category domain="https://shlomojune.github.io/categories/pwn/">Pwn</category>
+      <guid>http://localhost:1313/posts/lazy_binding/</guid>
+      <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
       <description>&lt;p&gt;延迟绑定过程分析&lt;/p&gt;</description>
     </item>
     <item>
       <title>N1Junior_2025 Pwn</title>
-      <link>https://shlomojune.github.io/posts/n1junior2025/</link>
+      <link>http://localhost:1313/posts/n1junior2025/</link>
       <pubDate>Wed, 12 Mar 2025 00:04:26 +0800</pubDate>
-      <guid>https://shlomojune.github.io/posts/n1junior2025/</guid>
-      <category domain="https://shlomojune.github.io/categories/wp/">WP</category>
+      <guid>http://localhost:1313/posts/n1junior2025/</guid>
+      <category domain="http://localhost:1313/categories/wp/">WP</category>
       <description>&lt;p&gt;N1Junior_2025 Pwn复现&lt;/p&gt;</description>
     </item>
   </channel>

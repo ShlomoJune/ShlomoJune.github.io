@@ -871,5 +871,5 @@ https://bbs.kanxue.com/thread-284745.htm
 ---
 
 > Author: J4f  
-> URL: https://shlomojune.github.io/posts/cpp_pwn/  
+> URL: http://localhost:1313/posts/cpp_pwn/  
 

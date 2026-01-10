@@ -1,126 +1,144 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://shlomojune.github.io/about/</loc>
+    <loc>http://localhost:1313/about/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/</loc>
+    <loc>http://localhost:1313/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/categories/</loc>
+    <loc>http://localhost:1313/posts/read_jdsbj/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/</loc>
+    <loc>http://localhost:1313/posts/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/categories/pwn/</loc>
+    <loc>http://localhost:1313/categories/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/musl_pwn/</loc>
+    <loc>http://localhost:1313/categories/pwn/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/read_qmgx/</loc>
+    <loc>http://localhost:1313/posts/musl_pwn/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/categories/reading/</loc>
+    <loc>http://localhost:1313/posts/read_qmgx/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/read_rsdzh/</loc>
+    <loc>http://localhost:1313/categories/reading/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/vmpwn/</loc>
+    <loc>http://localhost:1313/posts/read_rsdzh/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/cpp_pwn/</loc>
+    <loc>http://localhost:1313/posts/vmpwn/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/io_uring/</loc>
+    <loc>http://localhost:1313/posts/cpp_pwn/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/trxctf2025/</loc>
+    <loc>http://localhost:1313/posts/io_uring/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/categories/wp/</loc>
+    <loc>http://localhost:1313/categories/phppwn/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/read_fzdxj/</loc>
+    <loc>http://localhost:1313/posts/phppwn_re_struct/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</loc>
+    <loc>http://localhost:1313/posts/trxctf2025/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/dvctf2025/</loc>
+    <loc>http://localhost:1313/categories/wp/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/lazy_binding/</loc>
+    <loc>http://localhost:1313/posts/read_fzdxj/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/posts/n1junior2025/</loc>
+    <loc>http://localhost:1313/posts/cyber_apocalypse_ctf_2025_tales_from_eldoria/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/collections/</loc>
+    <loc>http://localhost:1313/posts/dvctf2025/</loc>
+    <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shlomojune.github.io/tags/</loc>
+    <loc>http://localhost:1313/posts/lazy_binding/</loc>
+    <lastmod>2026-01-10T21:01:26+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/posts/n1junior2025/</loc>
+    <lastmod>2026-01-10T21:01:26+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/collections/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/tags/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

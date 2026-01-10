@@ -639,7 +639,7 @@ orderby = "name" # Order of tags, optional values: ["name", "count"]
 
 # Home page profile
 [params.home.profile]
-enable = true
+enable = false
 # FixIt 0.4.0 | NEW Whether to show profile and content only in the first home page
 onlyFirstPage = false
 # Gravatar Email for preferred avatar in home page
