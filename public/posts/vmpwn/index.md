@@ -1,4 +1,4 @@
-# VMpwn
+# VMpwn练习
 
 
 
@@ -1118,6 +1118,6 @@ itr()
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/vmpwn/  
 

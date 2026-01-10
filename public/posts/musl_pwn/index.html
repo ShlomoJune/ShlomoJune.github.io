@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
-    <title>通过*ctf2022_babynote入门musl Pwn - J4f&#39;s blog</title><meta name="author" content="J4f">
+    <title>通过*ctf2022_babynote入门musl Pwn - J4f&#39;s blog</title><meta name="author" content=" ">
 <meta name="description" content="">
   <meta itemprop="name" content="通过*ctf2022_babynote入门musl pwn">
   <meta itemprop="datePublished" content="2026-01-10T02:01:48+08:00">
@@ -22,7 +22,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="通过*ctf2022_babynote入门musl pwn">
 <meta name="application-name" content="FixIt">
-<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/1.jpg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="http://localhost:1313/posts/musl_pwn/" title="通过*ctf2022_babynote入门musl pwn - J4f&#39;s blog" /><link rel="prev" type="text/html" href="http://localhost:1313/posts/read_qmgx/" title="《亲密关系》" /><link rel="next" type="text/html" href="http://localhost:1313/about/" title="About Me" /><link rel="alternate" type="text/markdown" href="http://localhost:1313/posts/musl_pwn/index.md" title="通过*ctf2022_babynote入门musl pwn - J4f's blog"><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/1.jpg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="http://localhost:1313/posts/musl_pwn/" title="通过*ctf2022_babynote入门musl pwn - J4f&#39;s blog" /><link rel="prev" type="text/html" href="http://localhost:1313/posts/read_qmgx/" title="《亲密关系》" /><link rel="next" type="text/html" href="http://localhost:1313/posts/read_jdsbj/" title="《基督山伯爵》" /><link rel="alternate" type="text/markdown" href="http://localhost:1313/posts/musl_pwn/index.md" title="通过*ctf2022_babynote入门musl pwn - J4f's blog"><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
   {
@@ -38,7 +38,7 @@
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
-        "name": "J4f"
+        "name": " "
       },"description": ""
   }
   </script><script src="/js/head/color-scheme.min.js"></script></head>
@@ -104,7 +104,8 @@
   <article class="page single">
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>通过*ctf2022_babynote入门musl Pwn</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><img class="avatar" src='/1.jpg' alt="J4f" height="16" width="16">&nbsp;J4f</span></span><span class="post-included-in">&nbsp;included in <a href="/categories/pwn/" class="post-category" title="Category - Pwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Pwn</a></span></div><div class="post-meta-line"><span title="published on 2026-01-10 02:01:48"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2026-01-10">2026-01-10</time></span>&nbsp;<span title="Updated on 2026-01-10 21:01:26"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2026-01-10">2026-01-10</time></span>&nbsp;<span title="2495 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 2500 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>12 minutes</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+       </span></span><span class="post-included-in">&nbsp;included in <a href="/categories/pwn/" class="post-category" title="Category - Pwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Pwn</a></span></div><div class="post-meta-line"><span title="published on 2026-01-10 02:01:48"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2026-01-10">2026-01-10</time></span>&nbsp;<span title="2495 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 2500 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>12 minutes</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>Contents</span>
@@ -1447,7 +1448,7 @@
     <section class="post-tags"></section>
     <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
     </section>
-  </div><div class="post-nav"><a href="/posts/read_qmgx/" class="post-nav-item" rel="prev" title="《亲密关系》"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>《亲密关系》</a></div>
+  </div><div class="post-nav"><a href="/posts/read_qmgx/" class="post-nav-item" rel="prev" title="《亲密关系》"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>《亲密关系》</a><a href="/posts/read_jdsbj/" class="post-nav-item" rel="next" title="《基督山伯爵》">《基督山伯爵》<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 </article>
 
@@ -1486,12 +1487,12 @@
     <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.154.3"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.2-20260109063229-50d27e0e"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2026</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">J4f</a></span></div></div>
+              <a href="/"> </a></span></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons"><div class="fixed-button back-to-top animate__faster d-none" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><svg viewBox="0 0 100 100">
               <circle class="bg" cx="50" cy="50" r="50"></circle>
               <circle class="progress" cx="50" cy="50" r="50"></circle>
             </svg></div><div id="toc-drawer-button" class="fixed-button toc-drawer-button d-none" role="button" aria-label="Contents"><i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
     <div class="noscript-warning">This website works best with JavaScript enabled.</div>
   </noscript>
-</div><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/config/e1fbaa725adb825c1eb7cc90e4cff26f.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</div><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/js/config/e1fbaa725adb825c1eb7cc90e4cff26f.js" defer></script><script src="/js/theme.min.js" defer></script></body>
 </html>

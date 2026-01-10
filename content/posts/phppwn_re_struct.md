@@ -12,7 +12,7 @@ categories=['phppwn']
 
 在phppwn逆向的时候，常遇到类似这样的东西：
 
-{{< image src="/img/phppwn/phppwn_re_struct/1.png" width="900px">}}
+{{< image src="/img/phppwn/phppwn_re_struct/php_re_struct.png" width="900px">}}
 
 其实它是对传入参数的类型进行判断，但是看起来并不太直观。
 

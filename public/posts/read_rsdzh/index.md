@@ -225,6 +225,6 @@
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/read_rsdzh/  
 

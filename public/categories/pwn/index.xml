@@ -17,12 +17,12 @@
       <description>通过*ctf2022_babynote入门musl pwn</description>
     </item>
     <item>
-      <title>VMpwn</title>
+      <title>VMpwn练习</title>
       <link>http://localhost:1313/posts/vmpwn/</link>
       <pubDate>Thu, 23 Oct 2025 23:27:58 +0800</pubDate>
       <guid>http://localhost:1313/posts/vmpwn/</guid>
       <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
-      <description>VMpwn</description>
+      <description>VMpwn练习</description>
     </item>
     <item>
       <title>C&#43;&#43;pwn之异常处理</title>

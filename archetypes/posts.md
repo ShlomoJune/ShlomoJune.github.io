@@ -1,8 +1,12 @@
 +++
 title = '{{ replace .File.ContentBaseName "-" " " | title }}'
 date = {{ .Date }}
-draft = true
+draft = false
+categories = ["pwn"]
+hiddenFromHomePage=false
+summary = ""
 +++
 
 
 
+<!--more-->

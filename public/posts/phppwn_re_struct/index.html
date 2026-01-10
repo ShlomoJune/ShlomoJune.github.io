@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
-    <title>Phppwn逆向 - J4f&#39;s blog</title><meta name="author" content="J4f">
+    <title>Phppwn逆向 - J4f&#39;s blog</title><meta name="author" content=" ">
 <meta name="description" content="相关结构体修复
 ">
   <meta itemprop="name" content="phppwn逆向">
@@ -42,7 +42,7 @@
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
-        "name": "J4f"
+        "name": " "
       },"description": ""
   }
   </script><script src="/js/head/color-scheme.min.js"></script></head>
@@ -108,10 +108,11 @@
   <article class="page single">
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Phppwn逆向</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><img class="avatar" src='/1.jpg' alt="J4f" height="16" width="16">&nbsp;J4f</span></span><span class="post-included-in">&nbsp;included in <a href="/categories/phppwn/" class="post-category" title="Category - Phppwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Phppwn</a></span></div><div class="post-meta-line"><span title="published on 2025-08-14 00:34:16"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-08-14">2025-08-14</time></span>&nbsp;<span title="Updated on 2026-01-10 21:01:26"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2026-01-10">2026-01-10</time></span>&nbsp;<span title="613 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 700 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>3 minutes</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+       </span></span><span class="post-included-in">&nbsp;included in <a href="/categories/phppwn/" class="post-category" title="Category - Phppwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Phppwn</a></span></div><div class="post-meta-line"><span title="published on 2025-08-14 00:34:16"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-08-14">2025-08-14</time></span>&nbsp;<span title="613 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 700 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>3 minutes</span>&nbsp;</div>
     </div><div class="content" id="content"><p>相关结构体修复</p>
 <p>在phppwn逆向的时候，常遇到类似这样的东西：</p>
-<a class="lightgallery" target="_blank" href="/img/phppwn/phppwn_re_struct/1.png" title="/img/phppwn/phppwn_re_struct/1.png" data-thumbnail="/img/phppwn/phppwn_re_struct/1.png" data-sub-html="<h2>/img/phppwn/phppwn_re_struct/1.png</h2>"><img loading="lazy" src='/img/phppwn/phppwn_re_struct/1.png' alt="/img/phppwn/phppwn_re_struct/1.png" width="900px"></a>
+<a class="lightgallery" target="_blank" href="/img/phppwn/phppwn_re_struct/php_re_struct.png" title="/img/phppwn/phppwn_re_struct/php_re_struct.png" data-thumbnail="/img/phppwn/phppwn_re_struct/php_re_struct.png" data-sub-html="<h2>/img/phppwn/phppwn_re_struct/php_re_struct.png</h2>"><img loading="lazy" src='/img/phppwn/phppwn_re_struct/php_re_struct.png' alt="/img/phppwn/phppwn_re_struct/php_re_struct.png" width="900px"></a>
 <p>其实它是对传入参数的类型进行判断，但是看起来并不太直观。</p>
 <p>IDA中支持导入C头文件，修复一些结构体</p>
 <p>经过修复：</p>
@@ -521,12 +522,12 @@
     <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.154.3"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.2-20260109063229-50d27e0e"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2026</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">J4f</a></span></div></div>
+              <a href="/"> </a></span></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons"><div class="fixed-button back-to-top animate__faster d-none" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><svg viewBox="0 0 100 100">
               <circle class="bg" cx="50" cy="50" r="50"></circle>
               <circle class="progress" cx="50" cy="50" r="50"></circle>
             </svg></div></div><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
     <div class="noscript-warning">This website works best with JavaScript enabled.</div>
   </noscript>
-</div><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/config/2a3bac134578559cb970b3af382041b5.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</div><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/js/config/2a3bac134578559cb970b3af382041b5.js" defer></script><script src="/js/theme.min.js" defer></script></body>
 </html>

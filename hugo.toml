@@ -152,7 +152,7 @@ lineNumbersInTable = true
 # Goldmark is from Hugo 0.60 the default library used for Markdown
 # See: https://gohugo.io/configuration/markup/#goldmark
 [markup.goldmark]
-duplicateResourceFiles = false
+duplicateResourceFiles = true
 
 [markup.goldmark.extensions]
 definitionList = true
@@ -415,7 +415,7 @@ disableThemeInject = false
 
 # Author Configuration
 [params.author]
-name = "J4f"
+name = " "
 email = ""
 link = ""
 avatar = "/1.jpg"
@@ -620,9 +620,9 @@ fullText = false
 
 # FixIt 0.3.13 | NEW recently updated pages config for archives, section and term list
 [params.recentlyUpdated]
-archives = true
-section = true
-list = true
+archives = false
+section = false
+list = false
 days = 30
 maxCount = 10
 
@@ -664,6 +664,8 @@ disclaimer = ""
 enable = true
 # 主页放几篇文章 special amount of posts in each home posts page 
 paginate = 18
+showAuthor = false
+showDate = false
 
 # FixIt 0.2.16 | CHANGED Social config about the author
 [params.social]
@@ -1065,7 +1067,7 @@ debug = false
 # TODO migrate mapping key to `params` layer in the future
 [params.page]
 # FixIt 0.2.18 | NEW whether to enable the author's avatar of the post
-authorAvatar = true
+authorAvatar = false
 # whether to hide a page from home page
 hiddenFromHomePage = false
 # whether to hide a page from search results
@@ -1105,7 +1107,7 @@ pageStyle = "normal"
 # If true, save the reading progress when closing the page.
 autoBookmark = false
 # FixIt 0.4.0 | NEW whether to show the last modified time
-showLastmod = true
+showLastmod = false
 # FixIt 0.2.17 | NEW whether to enable wordCount
 wordCount = true
 # FixIt 0.2.17 | NEW whether to enable readingTime

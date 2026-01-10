@@ -1,0 +1,9 @@
+/* 限制文章内图片最大宽度，并居中 */
+article img {
+    max-width: 80% !important; /* 最大只占文章宽度的 80% */
+    height: auto;
+    display: block;
+    margin: 1rem auto; /* 自动居中 */
+    border-radius: 4px; /* 给截图加个小圆角更好看 */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 给截图加个淡阴影，显得专业 */
+}

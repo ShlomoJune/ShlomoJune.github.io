@@ -218,6 +218,6 @@ p.interactive()
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/dvctf2025/  
 

@@ -3,7 +3,7 @@ date = '2025-10-23T23:40:32+08:00'
 draft = false
 title = '《人生的智慧》'
 categories = ["reading"]
-hiddenFromHomePage=true
+hiddenFromHomePage=false
 
 +++
 

@@ -870,6 +870,6 @@ https://bbs.kanxue.com/thread-284745.htm
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/cpp_pwn/  
 

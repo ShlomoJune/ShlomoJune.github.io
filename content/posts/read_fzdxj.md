@@ -3,15 +3,13 @@ date = '2025-08-06T16:42:15+08:00'
 draft = false
 title = '《法治的细节》'
 categories = ["reading"]
-hiddenFromHomePage=true
+hiddenFromHomePage=false
 
 +++
 
 
 
 <!--more-->
-
-{{< image src="/img/fazhidexijie/1.jpg" width="400px" height="500px" class="center-image">}}
 
 ------------
 

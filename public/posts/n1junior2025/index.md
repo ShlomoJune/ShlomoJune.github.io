@@ -554,6 +554,6 @@ p.interactive()
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/n1junior2025/  
 

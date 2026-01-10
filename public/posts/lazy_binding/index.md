@@ -119,7 +119,7 @@ printf@plt:
 
 函数第一次调用时，过程如下图：
 
-![lazy_binding](/img/lazy_binding/1.png)
+{{< image src="/img/lazy_binding/1.png" >}}
 
 1. 跳转到该函数的PLT条目
 2. 第一个jmp指令跳往对应函数的.got.plt入口，但是这个时候got表中还没有填充函数的真实地址。
@@ -204,6 +204,6 @@ printf@plt:
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/lazy_binding/  
 

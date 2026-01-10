@@ -5,8 +5,6 @@
 
 <!--more-->
 
-{{< image src="/img/fazhidexijie/1.jpg" width="400px" height="500px" class="center-image">}}
-
 ------------
 
 ## 摘录
@@ -44,6 +42,6 @@
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/read_fzdxj/  
 

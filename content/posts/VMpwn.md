@@ -1,7 +1,7 @@
 +++
 date = '2025-10-23T23:27:58+08:00'
 draft = false
-title = 'VMpwn'
+title = 'VMpwn练习'
 categories = ["pwn"]
 
 +++

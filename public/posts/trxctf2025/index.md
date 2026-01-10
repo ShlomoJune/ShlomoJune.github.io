@@ -378,6 +378,6 @@ https://github.com/torvalds/linux/commit/93e35efb8de45393cf61ed07f7b407629bf698e
 
 ---
 
-> Author: J4f  
+> Author:    
 > URL: http://localhost:1313/posts/trxctf2025/  
 
