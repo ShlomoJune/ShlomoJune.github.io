@@ -13,19 +13,13 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost:1313/posts/read_jdsbj/</loc>
+    <loc>http://localhost:1313/categories/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2026-01-10T21:01:26+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/categories/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -74,18 +68,6 @@
   </url>
   <url>
     <loc>http://localhost:1313/posts/io_uring/</loc>
-    <lastmod>2026-01-10T21:01:26+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/categories/phppwn/</loc>
-    <lastmod>2026-01-10T21:01:26+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/posts/phppwn_re_struct/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

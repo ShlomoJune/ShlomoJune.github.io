@@ -9,13 +9,6 @@
     <lastBuildDate>Sat, 10 Jan 2026 21:01:26 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>《基督山伯爵》</title>
-      <link>http://localhost:1313/posts/read_jdsbj/</link>
-      <pubDate>Sat, 10 Jan 2026 03:13:46 +0800</pubDate>
-      <guid>http://localhost:1313/posts/read_jdsbj/</guid>
-      <description>《基督山伯爵》</description>
-    </item>
-    <item>
       <title>通过*ctf2022_babynote入门musl pwn</title>
       <link>http://localhost:1313/posts/musl_pwn/</link>
       <pubDate>Sat, 10 Jan 2026 02:01:48 +0800</pubDate>
@@ -62,14 +55,6 @@
       <guid>http://localhost:1313/posts/io_uring/</guid>
       <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
       <description>&lt;p&gt;突破沙箱规则，实现orw&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>phppwn逆向</title>
-      <link>http://localhost:1313/posts/phppwn_re_struct/</link>
-      <pubDate>Thu, 14 Aug 2025 00:34:16 +0800</pubDate>
-      <guid>http://localhost:1313/posts/phppwn_re_struct/</guid>
-      <category domain="http://localhost:1313/categories/phppwn/">Phppwn</category>
-      <description>&lt;p&gt;相关结构体修复&lt;/p&gt;</description>
     </item>
     <item>
       <title>TRXCTF2025</title>
