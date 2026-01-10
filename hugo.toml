@@ -13,7 +13,8 @@
 # website title
 title = "J4f's blog"
 # Hostname (and path) to the root
-baseURL = "http://localhost:1313"
+# baseURL = "http://localhost:1313"
+baseURL = "https://shlomojune.github.io/"
 # theme list
 theme = ["FixIt"] # enable in your site config file
 # determines default content language ["en", "zh-cn", "fr", "pl", ...]
@@ -106,61 +107,16 @@ weight = 2
 [menus.main.params]
 icon = "fa-solid fa-folder-tree"
 
-[[menus.main]]
-identifier = "tags"
-parent = ""
-pre = ""
-post = ""
-name = "Tags"
-url = "/tags/"
-title = ""
-weight = 3
+# [[menus.main]]
+#   identifier = "about"
+#   parent = ""
+#   name = "About"
+#   url = "/about/"
+#   title = "About Me"
+#   weight = 3
 
-[menus.main.params]
-icon = "fa-solid fa-tags"
-
-# -------------------------------------------------------------------------------------
-# Related content Configuration
-# See: https://gohugo.io/content-management/related-content/
-# -------------------------------------------------------------------------------------
-
-[related]
-includeNewer = false
-threshold = 80
-toLower = false
-
-[[related.indices]]
-applyFilter = false
-cardinalityThreshold = 0
-name = 'keywords'
-pattern = ''
-toLower = false
-type = 'basic'
-weight = 100
-
-[[related.indices]]
-applyFilter = false
-cardinalityThreshold = 0
-name = 'date'
-pattern = ''
-toLower = false
-type = 'basic'
-weight = 10
-
-[[related.indices]]
-applyFilter = false
-cardinalityThreshold = 0
-name = 'tags'
-pattern = ''
-toLower = false
-type = 'basic'
-weight = 80
-
-[[related.indices]]
-applyFilter = false
-name = 'fragmentrefs'
-type = 'fragments'
-weight = 80
+# [menus.main.params]
+#   icon = "fa-solid fa-user-circle" # FixIt 支持 FontAwesome 图标
 
 # -------------------------------------------------------------------------------------
 # Modules Configuration
@@ -293,7 +249,7 @@ priority = 0.5
 [permalinks.term]
 
 # -------------------------------------------------------------------------------------
-# Privacy Configuration
+# Privacy Configuration 减少第三方追踪脚本的加载，可以稍微提升网页的加载速度
 # See: https://gohugo.io/configuration/privacy/
 # -------------------------------------------------------------------------------------
 
@@ -424,7 +380,7 @@ description = ""
 # site keywords
 keywords = []
 # site default theme ["light", "dark", "auto"]
-defaultTheme = "auto"
+defaultTheme = "light"
 # which hash function used for SRI, when empty, no SRI is used
 # ["sha256", "sha384", "sha512", "md5"]
 fingerprint = ""
@@ -459,10 +415,10 @@ disableThemeInject = false
 
 # Author Configuration
 [params.author]
-name = ""
+name = "J4f"
 email = ""
 link = ""
-avatar = ""
+avatar = "/1.jpg"
 
 # FixIt 0.3.0 | NEW public Git repository information only then enableGitInfo is true
 [params.gitInfo]
@@ -482,7 +438,7 @@ title = "FixIt"
 # whether to omit favicon resource links
 noFavicon = false
 # modern SVG favicon to use in place of older style .png and .ico files
-svgFavicon = ""
+svgFavicon = "/1.jpg"
 # Safari mask icon color
 iconColor = "#5bbad5"
 # Windows v8-10 tile color
@@ -493,9 +449,9 @@ tileColor = "#da532c"
 light = "#f8f8f8"
 dark = "#252627"
 
-# Search config
+# Search config 搜索功能
 [params.search]
-enable = false
+enable = true
 # type of search engine ["algolia", "fuse", "cse", "post-chat"]
 type = "fuse"
 # max index length of the chunked content
@@ -563,7 +519,7 @@ pre = ""
 # you can add extra information after the name (HTML format is supported), such as icons
 post = ""
 # whether to use typeit animation for title name
-typeit = false
+typeit = true
 
 # FixIt 0.2.12 | NEW Header subtitle config
 [params.header.subtitle]
@@ -683,7 +639,7 @@ orderby = "name" # Order of tags, optional values: ["name", "count"]
 
 # Home page profile
 [params.home.profile]
-enable = false
+enable = true
 # FixIt 0.4.0 | NEW Whether to show profile and content only in the first home page
 onlyFirstPage = false
 # Gravatar Email for preferred avatar in home page
@@ -706,99 +662,14 @@ disclaimer = ""
 # Home page posts
 [params.home.posts]
 enable = true
-# special amount of posts in each home posts page
-paginate = 6
+# 主页放几篇文章 special amount of posts in each home posts page 
+paginate = 18
 
 # FixIt 0.2.16 | CHANGED Social config about the author
 [params.social]
-GitHub = ""
-Linkedin = ""
-Twitter = ""
-Instagram = ""
-Facebook = ""
-Telegram = ""
-Medium = ""
-Gitlab = ""
-Youtubelegacy = ""
-Youtubecustom = ""
-Youtubechannel = ""
-Tumblr = ""
-Quora = ""
-Keybase = ""
-Pinterest = ""
-Reddit = ""
-Codepen = ""
-FreeCodeCamp = ""
-Bitbucket = ""
-Stackoverflow = ""
-Weibo = ""
-Odnoklassniki = ""
-VK = ""
-Flickr = ""
-Xing = ""
-Snapchat = ""
-Soundcloud = ""
-Spotify = ""
-Bandcamp = ""
-Paypal = ""
-Fivehundredpx = ""
-Mix = ""
-Goodreads = ""
-Lastfm = ""
-Foursquare = ""
-Hackernews = ""
-Kickstarter = ""
-Patreon = ""
-Steam = ""
-Twitch = ""
-Strava = ""
-Skype = ""
-Whatsapp = ""
-Zhihu = ""
-Douban = ""
-Angellist = ""
-Slidershare = ""
-Jsfiddle = ""
-Deviantart = ""
-Behance = ""
-Dribbble = ""
-Wordpress = ""
-Vine = ""
-Googlescholar = ""
-Researchgate = ""
-Mastodon = ""
-Thingiverse = ""
-Devto = ""
-Gitea = ""
-XMPP = ""
-Matrix = ""
-Bilibili = ""
-ORCID = ""
-Liberapay = ""
-Ko-Fi = ""
-BuyMeaCoffee = ""
-Linktree = ""
+GitHub = "ShlomoJune"
 QQ = ""
-QQGroup = "" # https://qun.qq.com/join.html
-Diaspora = ""
-CSDN = ""
-Discord = ""
-DiscordInvite = ""
-Lichess = ""
-Pleroma = ""
-Kaggle = ""
-MediaWiki = ""
-Plume = ""
-HackTheBox = ""
-RootMe = ""
-Feishu = ""
-TryHackMe = ""
-Douyin = ""
-TikTok = ""
-Credly = ""
-Bluesky = ""
-Phone = ""
-Email = ""
+Email = "ShomoJune@outlook.com"
 RSS = true
 
 # custom social links like the following
@@ -1022,11 +893,11 @@ style = "" # ["", "mp", "identicon", "monsterid", "wavatar", "retro", "blank", "
 [params.backToTop]
 enable = true
 # FixIt 0.4.0 | CHANGED whether to show the scroll percent indicator around the back to top button
-scrollpercent = false
+scrollpercent = true
 
 # FixIt 0.2.16 | NEW Reading progress bar
 [params.readingProgress]
-enable = false
+enable = true
 # Available values: ["left", "right"]
 start = "left"
 # Available values: ["top", "bottom"]
@@ -1408,11 +1279,11 @@ mode = "static"
 # paypal = "/images/paypal.png"
 # bitcoin = "/images/bitcoin.png"
 
-# Social share links in post page
+# Social share links in post page 文章末尾的链接
 [params.page.share]
-enable = true
-Twitter = true
-Facebook = true
+enable = false
+Twitter = false
+Facebook = false
 Linkedin = false
 Whatsapp = false
 Pinterest = false

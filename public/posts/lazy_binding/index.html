@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>延迟绑定过程分析 - J4f&#39;s blog</title><meta name="author" content="J4f">
+<meta name="description" content="延迟绑定过程分析
+">
+  <meta itemprop="name" content="延迟绑定过程分析">
+  <meta itemprop="description" content="延迟绑定过程分析">
+  <meta itemprop="datePublished" content="2025-03-24T20:53:24+08:00">
+  <meta itemprop="dateModified" content="2025-07-27T21:00:08+08:00">
+  <meta itemprop="wordCount" content="394">
+  <meta itemprop="keywords" content="Pwn"><meta property="og:url" content="http://localhost:1313/posts/lazy_binding/">
+  <meta property="og:site_name" content="J4f&#39;s blog">
+  <meta property="og:title" content="延迟绑定过程分析">
+  <meta property="og:description" content="延迟绑定过程分析">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-03-24T20:53:24+08:00">
+    <meta property="article:modified_time" content="2025-07-27T21:00:08+08:00">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="延迟绑定过程分析">
+  <meta name="twitter:description" content="延迟绑定过程分析">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/1.jpg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="http://localhost:1313/posts/lazy_binding/" title="延迟绑定过程分析 - J4f&#39;s blog" /><link rel="prev" type="text/html" href="http://localhost:1313/posts/n1junior2025/" title="N1Junior_2025 Pwn" /><link rel="next" type="text/html" href="http://localhost:1313/posts/dvctf2025/" title="DVCTF2025" /><link rel="alternate" type="text/markdown" href="http://localhost:1313/posts/lazy_binding/index.md" title="延迟绑定过程分析 - J4f's blog"><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "延迟绑定过程分析",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/posts\/lazy_binding\/"
+    },"genre": "posts","wordcount":  394 ,
+    "url": "http:\/\/localhost:1313\/posts\/lazy_binding\/","datePublished": "2025-03-24T20:53:24+08:00","dateModified": "2025-07-27T21:00:08+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "J4f"
+      },"description": ""
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-instant-intensity="viewport" data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="Search titles or contents ..." id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" role="button" aria-label="Switch Theme" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+      <div class="theme-switch" role="button" aria-label="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></div>
+      <div class="menu-toggle" id="menu-toggle-mobile" role="button" aria-labelledby="menu-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="Search titles or contents ..." id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              Cancel
+            </a>
+          </li><li class="menu-item"><a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item menu-system"></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="fi-container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="Collections"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>延迟绑定过程分析</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><img class="avatar" src='/1.jpg' alt="J4f" height="16" width="16">&nbsp;J4f</span></span><span class="post-included-in">&nbsp;included in <a href="/categories/pwn/" class="post-category" title="Category - Pwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Pwn</a></span></div><div class="post-meta-line"><span title="published on 2025-03-24 20:53:24"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-03-24">2025-03-24</time></span>&nbsp;<span title="Updated on 2025-07-27 21:00:08"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-07-27">2025-07-27</time></span>&nbsp;<span title="394 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 400 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#global-offset-tablegot全局偏移表">Global Offset Table(GOT，全局偏移表)</a>
+      <ul>
+        <li><a href="#gotplt的公共表项">.got.plt的公共表项</a></li>
+        <li><a href="#link_map">link_map</a></li>
+      </ul>
+    </li>
+    <li><a href="#procedure-linkage-tableplt进程链接表">Procedure Linkage Table(PLT,进程链接表)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#第一次调用过程">第一次调用过程：</a></li>
+    <li><a href="#非首次调用过程">非首次调用过程：</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>延迟绑定过程分析</p>
+<h1 class="heading-element" id="gotplt"><span>GOT&amp;PLT</span>
+  <a href="#gotplt" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h1><p>got表和plt表都是程序调用外部函数时，定位该函数需要使用到的表</p>
+<h2 class="heading-element" id="global-offset-tablegot全局偏移表"><span>Global Offset Table(GOT，全局偏移表)</span>
+  <a href="#global-offset-tablegot%e5%85%a8%e5%b1%80%e5%81%8f%e7%a7%bb%e8%a1%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>GOT 表的主要功能是 <strong>存储动态链接库（如 <code>libc.so</code>）中函数和全局变量的运行时地址</strong>。</p>
+<p>GOT表包括两种类型<code>.got</code>和<code>.got.plt</code></p>
+<ul>
+<li>.got
+<ul>
+<li>存储 <strong>全局变量</strong> 的地址</li>
+</ul>
+</li>
+<li>.got.plt
+<ul>
+<li>存储 <strong>动态库函数</strong> 的地址（如 <code>printf</code>、<code>read</code>）。</li>
+<li>与 <strong>PLT（Procedure Linkage Table）</strong> 配合实现 <strong>延迟绑定（Lazy Binding）</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 class="heading-element" id="gotplt的公共表项"><span>.got.plt的公共表项</span>
+  <a href="#gotplt%e7%9a%84%e5%85%ac%e5%85%b1%e8%a1%a8%e9%a1%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>有三个公共表项，分别是</p>
+<ul>
+<li>got[0]:<code>_DYNAMIC</code>:指向 <strong>动态段（<code>.dynamic</code>）</strong> 的地址</li>
+<li>got[1]:<code>link_map</code> 指针:动态链接器内部使用的 <code>link_map</code> 结构指针（用于符号解析）</li>
+<li>got[2]:<code>_dl_runtime_resolve</code>:动态解析函数的地址</li>
+</ul>
+<p>got[3]开始就是函数的地址</p>
+<p><strong>示例：x86-64 的 <code>.got.plt</code> 布局</strong></p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-asm"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span> <span class="c1">; Segment type: Pure data
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span> <span class="c1">; Segment permissions: Read/Write
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span> <span class="no">_got_plt</span>        <span class="no">segment</span> <span class="no">qword</span> <span class="no">public</span> <span class="err">&#39;</span><span class="no">DATA</span><span class="err">&#39;</span> <span class="no">use64</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span>                 <span class="no">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">_got_plt</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span>                 <span class="c1">;org 403FE8h
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span> <span class="no">_GLOBAL_OFFSET_TABLE_</span> <span class="no">dq</span> <span class="no">offset</span> <span class="no">_DYNAMIC</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FF0</span> <span class="no">qword_403FF0</span>    <span class="no">dq</span> <span class="mi">0</span>                    <span class="c1">; DATA XREF: sub_401020↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FF8</span> <span class="no">qword_403FF8</span>    <span class="no">dq</span> <span class="mi">0</span>                    <span class="c1">; DATA XREF: sub_401020+6↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404000</span> <span class="nf">off_404000</span>      <span class="no">dq</span> <span class="no">offset</span> <span class="no">seccomp_init</span>  <span class="c1">; DATA XREF: _seccomp_init+4↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404008</span> <span class="nf">off_404008</span>      <span class="no">dq</span> <span class="no">offset</span> <span class="no">seccomp_rule_add</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404008</span>                                         <span class="c1">; DATA XREF: _seccomp_rule_add+4↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404010</span> <span class="nf">off_404010</span>      <span class="no">dq</span> <span class="no">offset</span> <span class="no">write</span>         <span class="c1">; DATA XREF: _write+4↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404018</span> <span class="nf">off_404018</span>      <span class="no">dq</span> <span class="no">offset</span> <span class="no">seccomp_load</span>  <span class="c1">; DATA XREF: _seccomp_load+4↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404020</span> <span class="nf">off_404020</span>      <span class="no">dq</span> <span class="no">offset</span> <span class="no">setbuf</span>        <span class="c1">; DATA XREF: _setbuf+4↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404028</span> <span class="nf">off_404028</span>      <span class="no">dq</span> <span class="no">offset</span> <span class="no">close</span>         <span class="c1">; DATA XREF: _close+4↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404030</span> <span class="nf">off_404030</span>      <span class="no">dq</span> <span class="no">offset</span> <span class="no">read</span>          <span class="c1">; DATA XREF: _read+4↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404030</span> <span class="nf">_got_plt</span>        <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000404030</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>其中</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-asm"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FE8</span> <span class="no">_GLOBAL_OFFSET_TABLE_</span> <span class="no">dq</span> <span class="no">offset</span> <span class="no">_DYNAMIC</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FF0</span> <span class="no">qword_403FF0</span>    <span class="no">dq</span> <span class="mi">0</span>                    <span class="c1">; DATA XREF: sub_401020↑r
+</span></span></span><span class="line"><span class="cl"><span class="nl">.got.plt:</span><span class="err">0000000000403</span><span class="nf">FF8</span> <span class="no">qword_403FF8</span>    <span class="no">dq</span> <span class="mi">0</span>                    <span class="err">;</span> <span class="no">DATA</span> <span class="no">XREF</span><span class="p">:</span> <span class="no">sub_401020</span><span class="err">+</span><span class="mi">6</span><span class="err">↑</span><span class="no">r</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>就是公共表项，从上到下依次就是got[0]、got[1]、got[2]</p>
+<p>got[1]、got[2]由动态链接器在装载共享模块的时候负责将它们初始化</p>
+<h3 class="heading-element" id="link_map"><span>link_map</span>
+  <a href="#link_map" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>数据结构的定义如下：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">link_map</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="cm">/* Shared library&#39;s load address. */</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">ElfW</span><span class="p">(</span><span class="n">Addr</span><span class="p">)</span> <span class="n">l_addr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">   <span class="cm">/* Pointer to library&#39;s name in the string table. */</span>                                 
+</span></span><span class="line"><span class="cl">   <span class="kt">char</span> <span class="o">*</span><span class="n">l_name</span><span class="p">;</span>    
+</span></span><span class="line"><span class="cl">   
+</span></span><span class="line"><span class="cl">    <span class="cm">/* 
+</span></span></span><span class="line"><span class="cl"><span class="cm">        Dynamic section of the shared object.
+</span></span></span><span class="line"><span class="cl"><span class="cm">        Includes dynamic linking info etc.
+</span></span></span><span class="line"><span class="cl"><span class="cm">        Not interesting to us.  
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>                   
+</span></span><span class="line"><span class="cl">   <span class="nf">ElfW</span><span class="p">(</span><span class="n">Dyn</span><span class="p">)</span> <span class="o">*</span><span class="n">l_ld</span><span class="p">;</span>   
+</span></span><span class="line"><span class="cl">   
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Pointer to previous and next link_map node. */</span>                 
+</span></span><span class="line"><span class="cl">   <span class="k">struct</span> <span class="n">link_map</span> <span class="o">*</span><span class="n">l_next</span><span class="p">,</span> <span class="o">*</span><span class="n">l_prev</span><span class="p">;</span>   
+</span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>首次调用动态函数时，<code>_dl_runtime_resolve</code> 通过 <code>link_map</code> 解析符号地址。</p>
+<h2 class="heading-element" id="procedure-linkage-tableplt进程链接表"><span>Procedure Linkage Table(PLT,进程链接表)</span>
+  <a href="#procedure-linkage-tableplt%e8%bf%9b%e7%a8%8b%e9%93%be%e6%8e%a5%e8%a1%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><strong>结构：</strong></p>
+<ul>
+<li><strong>PLT0（公共解析逻辑）</strong>
+所有 PLT 条目共享的代码，负责调用 <code>_dl_runtime_resolve</code> 解析函数地址。</li>
+<li><strong>PLT1, PLT2, &hellip;（函数专用条目）</strong>
+每个动态函数（如 <code>printf</code>、<code>read</code>）有一个 PLT 条目。</li>
+</ul>
+<p><strong>典型 PLT 条目（x86-64）</strong></p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">printf@plt:
+</span></span><span class="line"><span class="cl">    jmp  *GOT[n]       ; 首次调用时，GOT[n] 指向下一行（解析逻辑）
+</span></span><span class="line"><span class="cl">    push 5             ; 符号索引（5 = printf 在 .dynsym 中的下标）
+</span></span><span class="line"><span class="cl">    jmp  PLT0          ; 跳转到公共解析逻辑（_dl_runtime_resolve）</span></span></code></pre></td></tr></table></div>
+</div>
+</div><h1 class="heading-element" id="延迟绑定过程"><span>延迟绑定过程</span>
+  <a href="#%e5%bb%b6%e8%bf%9f%e7%bb%91%e5%ae%9a%e8%bf%87%e7%a8%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h1><p>函数第一次调用时，过程如下图：</p>
+<p><img loading="lazy" src='/img/lazy_binding/1.png' alt="lazy_binding"></p>
+<ol>
+<li>跳转到该函数的PLT条目</li>
+<li>第一个jmp指令跳往对应函数的.got.plt入口，但是这个时候got表中还没有填充函数的真实地址。</li>
+<li>所以从got表跳回到plt表中，继续往下执行push;jmp。跳回后，push的值是对应函数在**.got.plt**入口的偏移</li>
+<li>跳到PLT头部，执行push指令，将 <strong>GOT[1]</strong> 的地址（link_map的地址）入栈。</li>
+<li>接着jmp到 **GOT[2] **</li>
+<li>即dl_runtime_resolve相关的函数对动态函数进行地址解析和重定位</li>
+<li>并且把函数真实地址回填到got表中</li>
+<li>最后执行函数</li>
+</ol>
+<p>非首次调用，过程如下图：</p>
+<p><img loading="lazy" src='/img/lazy_binding/2.png' alt="lazy_binding"></p>
+<p>之后再调用该函数的时候，plt只有一个跳转指令，找到对应的函数地址之后执行函数。动态调试看了一个整个运行过程，有了一个更深入的的理解。</p>
+<ol>
+<li>跳转到该函数的PLT条目</li>
+<li>第一个jmp指令跳往对应函数的.got.plt入口</li>
+<li>此时的got表被填充为函数的真实地址，跳转到真实地址</li>
+<li>执行函数</li>
+</ol>
+<h1 class="heading-element" id="实际分析"><span>实际分析</span>
+  <a href="#%e5%ae%9e%e9%99%85%e5%88%86%e6%9e%90" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h1><p>这里用gdb动态调试，实际分析一下</p>
+<h2 class="heading-element" id="第一次调用过程"><span>第一次调用过程：</span>
+  <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e8%b0%83%e7%94%a8%e8%bf%87%e7%a8%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><img loading="lazy" src='/img/lazy_binding/3.png' alt="lazy_binding"></p>
+<p>首先函数call了0x401100，0x401100就是read函数的.plt.sec</p>
+<p><img loading="lazy" src='/img/lazy_binding/4.png' alt="lazy_binding"></p>
+<p>接着step步入</p>
+<p><img loading="lazy" src='/img/lazy_binding/5.png' alt="lazy_binding"></p>
+<p>可以看到，实际上，程序会先进入.plt.sec执行jmp，再到.plt中执行push;jmp。</p>
+<p><img loading="lazy" src='/img/lazy_binding/8.png' alt="lazy_binding"></p>
+<p>可以看到这时read函数的.got.plt还没被更改为真实地址，而是指向read函数PLT表项中的push</p>
+<p><img loading="lazy" src='/img/lazy_binding/6.png' alt="lazy_binding"></p>
+<p><img loading="lazy" src='/img/lazy_binding/7.png' alt="lazy_binding"></p>
+<p>执行完dl_runtime_resolve相关的函数，就会进入read的真实地址执行read，同时可以看到，read函数的.got.plt也指向的该函数真实地址</p>
+<p>接着就执行read函数</p>
+<h2 class="heading-element" id="非首次调用过程"><span>非首次调用过程：</span>
+  <a href="#%e9%9d%9e%e9%a6%96%e6%ac%a1%e8%b0%83%e7%94%a8%e8%bf%87%e7%a8%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><img loading="lazy" src='/img/lazy_binding/9.png' alt="lazy_binding"></p>
+<p>先call了read函数的.plt.sec</p>
+<p>然后s步入</p>
+<p><img loading="lazy" src='/img/lazy_binding/10.png' alt="lazy_binding"></p>
+<p><code>qword ptr [rip + 0x2f26]</code>就是取出存储在<code>read</code>的.got.plt中地址，然后跳转到该地址</p>
+<blockquote>
+<div class="table-wrapper">
+  <table>
+    <thead>
+        <tr>
+            <th style="text-align: left">指令</th>
+            <th style="text-align: left">行为</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: left"><code>jmp 0x404040</code></td>
+            <td style="text-align: left">直接跳转到 <code>0x404040</code>（绝对地址）</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>jmp [0x403f2c]</code></td>
+            <td style="text-align: left">从 <code>0x403f2c</code> 读取 8 字节作为目标地址</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>jmp    qword ptr [rip + 0x2f26]</code></td>
+            <td style="text-align: left">从 <code>(RIP + 0x2f26)</code> 读取 8 字节作为目标地址（动态计算）</td>
+        </tr>
+    </tbody>
+  </table>
+</div></blockquote>
+<p>然后直接执行read</p>
+<p><strong>所以，非首次调用，got表中存储的就是真实地址</strong></p>
+<h1 class="heading-element" id="参考文献"><span>参考文献</span>
+  <a href="#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h1><p><a href="https://yjy123123.github.io/2021/12/06/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/" target="_blank" rel="external nofollow noopener noreferrer">延迟绑定过程分析</a>：理论分析</p>
+<p><a href="https://evilpan.com/2018/04/09/about-got-plt/#got--gotplt" target="_blank" rel="external nofollow noopener noreferrer">深入理解plt表、got表和动态链接</a>：前置知识</p>
+<p><a href="https://blog.csdn.net/s5555555___/article/details/136199196" target="_blank" rel="external nofollow noopener noreferrer">延迟绑定过程图</a></p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod"><span title="Updated on 2025-07-27 21:00:08">Updated on 2025-07-27&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="/posts/lazy_binding/index.md" title="Read Markdown" class="link-to-markdown">Read Markdown</a></span><span><a href="vscode://file/D:%5cBlog%5ccontent%5cposts%5clazy_binding.md" title="Open in editor" target="_blank" rel="external nofollow noopener noreferrer" class="link-to-vscode">Open in editor</a></span></div>
+        <div class="post-info-share">
+          <span></span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"></section>
+    <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/n1junior2025/" class="post-nav-item" rel="prev" title="N1Junior_2025 Pwn"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>N1Junior_2025 Pwn</a><a href="/posts/dvctf2025/" class="post-nav-item" rel="next" title="DVCTF2025">DVCTF2025<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="Contents"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside><dialog id="toc-dialog" aria-labelledby="toc-dialog-title" role="dialog">
+      <div class="toc">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-drawer"><nav >
+  <ul>
+    <li><a href="#global-offset-tablegot全局偏移表">Global Offset Table(GOT，全局偏移表)</a>
+      <ul>
+        <li><a href="#gotplt的公共表项">.got.plt的公共表项</a></li>
+        <li><a href="#link_map">link_map</a></li>
+      </ul>
+    </li>
+    <li><a href="#procedure-linkage-tableplt进程链接表">Procedure Linkage Table(PLT,进程链接表)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#第一次调用过程">第一次调用过程：</a></li>
+    <li><a href="#非首次调用过程">非首次调用过程：</a></li>
+  </ul>
+</nav></div>
+      </div>
+    </dialog></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.154.3"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.2-20260109063229-50d27e0e"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2026</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">J4f</a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons"><div class="fixed-button back-to-top animate__faster d-none" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="50"></circle>
+              <circle class="progress" cx="50" cy="50" r="50"></circle>
+            </svg></div><div id="toc-drawer-button" class="fixed-button toc-drawer-button d-none" role="button" aria-label="Contents"><i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">This website works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/config/3330a2034a9eb891766a0a8feceeecea.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</html>

