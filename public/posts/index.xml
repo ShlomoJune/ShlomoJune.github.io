@@ -6,14 +6,23 @@
     <description>J4f&#39;s blog</description>
     <generator>Hugo 0.154.3 &amp; FixIt v0.4.2-20260109063229-50d27e0e</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 10 Jan 2026 21:01:26 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 13 Jan 2026 02:31:16 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>《政治的人生》</title>
+      <link>http://localhost:1313/posts/read_zzdrs/</link>
+      <pubDate>Tue, 13 Jan 2026 02:13:53 +0800</pubDate>
+      <guid>http://localhost:1313/posts/read_zzdrs/</guid>
+      <category domain="http://localhost:1313/categories/reading/">Reading</category>
+      <description>《政治的人生》</description>
+    </item>
     <item>
       <title>《基督山伯爵》</title>
       <link>http://localhost:1313/posts/read_jdsbj/</link>
-      <pubDate>Sat, 10 Jan 2026 03:13:46 +0800</pubDate>
+      <pubDate>Tue, 13 Jan 2026 00:25:03 +0800</pubDate>
       <guid>http://localhost:1313/posts/read_jdsbj/</guid>
-      <description>《基督山伯爵》</description>
+      <category domain="http://localhost:1313/categories/reading/">Reading</category>
+      <description>人类的智慧就包含在这五个字里面：“等待和希望！”</description>
     </item>
     <item>
       <title>通过*ctf2022_babynote入门musl pwn</title>
@@ -29,7 +38,7 @@
       <pubDate>Thu, 23 Oct 2025 23:55:44 +0800</pubDate>
       <guid>http://localhost:1313/posts/read_qmgx/</guid>
       <category domain="http://localhost:1313/categories/reading/">Reading</category>
-      <description>《亲密关系》</description>
+      <description>找到你生命中的真爱并不能让你永远幸福。</description>
     </item>
     <item>
       <title>《人生的智慧》</title>

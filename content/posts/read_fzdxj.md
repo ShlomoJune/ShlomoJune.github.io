@@ -3,7 +3,7 @@ date = '2025-08-06T16:42:15+08:00'
 draft = false
 title = '《法治的细节》'
 categories = ["reading"]
-hiddenFromHomePage=false
+hiddenFromHomePage=true
 
 +++
 
