@@ -96,6 +96,8 @@ p = process("./pwn")
 
 ### 调试
 
+
+
 ```sh
 sudo apt install musl-dbgsym
 git clone https://github.com/xf1les/muslheap.git  
@@ -115,6 +117,14 @@ echo "source /path/to/muslheap.py" >> ~/.gdbinit
 | mfindslot  <addr>                            | 从任意地址反向定位其所在 `slot`                              |
 | p/x stdout                                   | 查看`stdout`结构体                                           |
 | p/x *(struct meta_area*) <meta_area address> | 查看`meta_area`，`meta & 0xffffffffffff000`就能找到`meta_arena`结构体 |
+
+
+
+{{< admonition type=note title="Note" open=true >}}
+
+~~后记~~ 原来pwndbg中有调试musl的命令，{{< link href="https://pwndbg.re/stable/commands/musl/mallocng-dump/" content=pwndbg_docs >}}
+
+{{< /admonition >}}
 
 
 
