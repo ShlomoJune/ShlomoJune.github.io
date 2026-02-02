@@ -6,8 +6,16 @@
     <description>J4f&#39;s blog</description>
     <generator>Hugo 0.154.3 &amp; FixIt v0.4.2-20260109063229-50d27e0e</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 26 Jan 2026 16:10:37 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Feb 2026 12:07:55 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Phppwn笔记</title>
+      <link>http://localhost:1313/posts/phppwn_note/</link>
+      <pubDate>Mon, 02 Feb 2026 11:41:59 +0800</pubDate>
+      <guid>http://localhost:1313/posts/phppwn_note/</guid>
+      <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
+      <description>Phppwn笔记</description>
+    </item>
     <item>
       <title>《明朝那些事儿》</title>
       <link>http://localhost:1313/posts/read_mcnxse/</link>
@@ -79,14 +87,6 @@
       <guid>http://localhost:1313/posts/io_uring/</guid>
       <category domain="http://localhost:1313/categories/pwn/">Pwn</category>
       <description>&lt;p&gt;突破沙箱规则，实现orw&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>phppwn逆向</title>
-      <link>http://localhost:1313/posts/phppwn_re_struct/</link>
-      <pubDate>Thu, 14 Aug 2025 00:34:16 +0800</pubDate>
-      <guid>http://localhost:1313/posts/phppwn_re_struct/</guid>
-      <category domain="http://localhost:1313/categories/phppwn/">Phppwn</category>
-      <description>&lt;p&gt;相关结构体修复&lt;/p&gt;</description>
     </item>
     <item>
       <title>TRXCTF2025</title>

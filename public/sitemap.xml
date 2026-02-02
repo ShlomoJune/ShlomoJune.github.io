@@ -2,31 +2,43 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/categories/</loc>
-    <lastmod>2026-01-26T15:36:13+08:00</lastmod>
+    <lastmod>2026-02-02T12:07:27+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2026-01-26T15:36:13+08:00</lastmod>
+    <lastmod>2026-02-02T12:07:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/posts/phppwn_note/</loc>
+    <lastmod>2026-02-02T12:07:27+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2026-01-26T15:36:13+08:00</lastmod>
+    <lastmod>2026-02-02T12:07:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://localhost:1313/categories/pwn/</loc>
+    <lastmod>2026-02-02T12:07:27+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/posts/read_mcnxse/</loc>
-    <lastmod>2026-01-26T15:36:13+08:00</lastmod>
+    <lastmod>2026-01-26T16:11:28+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost:1313/categories/reading/</loc>
-    <lastmod>2026-01-26T15:36:13+08:00</lastmod>
+    <lastmod>2026-01-26T16:11:28+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -45,12 +57,6 @@
   <url>
     <loc>http://localhost:1313/about/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/categories/pwn/</loc>
-    <lastmod>2026-01-19T14:50:34+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -87,18 +93,6 @@
   <url>
     <loc>http://localhost:1313/posts/io_uring/</loc>
     <lastmod>2026-01-10T21:01:26+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/categories/phppwn/</loc>
-    <lastmod>2026-01-10T22:20:12+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost:1313/posts/phppwn_re_struct/</loc>
-    <lastmod>2026-01-10T22:20:12+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
