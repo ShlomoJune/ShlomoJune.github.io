@@ -8,7 +8,7 @@
 <meta name="description" content="">
   <meta itemprop="name" content="内核ebpfpwn（未完成版）">
   <meta itemprop="datePublished" content="2026-02-02T12:14:05+08:00">
-  <meta itemprop="dateModified" content="2026-02-02T12:18:53+08:00">
+  <meta itemprop="dateModified" content="2026-02-02T12:27:43+08:00">
   <meta itemprop="wordCount" content="7170">
   <meta itemprop="keywords" content="Pwn"><meta property="og:url" content="http://localhost:1313/posts/kernel_ebpfpwn/">
   <meta property="og:site_name" content="J4f&#39;s blog">
@@ -17,7 +17,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2026-02-02T12:14:05+08:00">
-    <meta property="article:modified_time" content="2026-02-02T12:18:53+08:00">
+    <meta property="article:modified_time" content="2026-02-02T12:27:43+08:00">
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="内核ebpfpwn（未完成版）">
@@ -34,7 +34,7 @@
       "@type": "WebPage",
       "@id": "http:\/\/localhost:1313\/posts\/kernel_ebpfpwn\/"
     },"genre": "posts","wordcount":  7170 ,
-    "url": "http:\/\/localhost:1313\/posts\/kernel_ebpfpwn\/","datePublished": "2026-02-02T12:14:05+08:00","dateModified": "2026-02-02T12:18:53+08:00","publisher": {
+    "url": "http:\/\/localhost:1313\/posts\/kernel_ebpfpwn\/","datePublished": "2026-02-02T12:14:05+08:00","dateModified": "2026-02-02T12:27:43+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -465,6 +465,8 @@
 </li>
 <li>
 <p>ALU32 会 <strong>清零高 32 位</strong></p>
+</li>
+<li>
 <p>未初始化的寄存器 / stack 禁止使用（程序开始时，寄存器r1已经初始化为一个指针，类型为<code>PTR_TO_CTX</code>）</p>
 </li>
 <li>
@@ -3735,7 +3737,7 @@
 <p><a href="https://196082.github.io/2023/01/06/d3bpf/" target="_blank" rel="external nofollow noopener noreferrer">https://196082.github.io/2023/01/06/d3bpf/</a></p></div><div class="post-footer" id="post-footer">
   <div class="post-info">
     <div class="post-info-line">
-      <div class="post-info-mod"><span title="Updated on 2026-02-02 12:18:53">Updated on 2026-02-02&nbsp;</span>
+      <div class="post-info-mod"><span title="Updated on 2026-02-02 12:27:43">Updated on 2026-02-02&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
